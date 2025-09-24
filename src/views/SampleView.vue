@@ -7,12 +7,12 @@ import { getPosts } from '@/services/posts/getPosts';
 
 <template>
   <DashboardLayout>
-  <div class="w-full h-full flex items-center justify-center bg-gray-100">
-    <div class="container mx-auto p-4">
-        <Button class="hover:cursor-pointer mb-8" @click="handleGetPosts">Show Post</Button>
-        <ArticleComponent v-if="posts.length > 0" :title=posts[0].title :body=posts[0].body />
+    <div class="w-full h-full flex items-center justify-center bg-gray-100">
+      <div class="container mx-auto p-4">
+          <Button class="hover:cursor-pointer mb-8" @click="handleGetPosts">Show Post</Button>
+          <ArticleComponent v-if="posts.length > 0" :title=posts[0].title :body=posts[0].body />
+      </div>
     </div>
-  </div>
   </DashboardLayout>
 </template>
 
