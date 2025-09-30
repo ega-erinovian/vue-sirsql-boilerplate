@@ -4,8 +4,11 @@ import App from './App.vue'
 import { router } from './router'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin, QueryClient } from '@tanstack/vue-query'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
 const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate); // save store to localStorage
+
 const app = createApp(App)
 
 const queryClient = new QueryClient({

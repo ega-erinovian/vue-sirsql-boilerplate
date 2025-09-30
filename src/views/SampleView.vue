@@ -1,3 +1,24 @@
+<script setup>
+import { Button } from '@/components/ui/button'
+import { usePosts } from '@/composables/queries/usePosts'
+
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+
+// Use the posts query
+const { 
+  data, 
+  isLoading, 
+  error, 
+  refetch, 
+  isRefetching,
+  isFetching,
+  isStale,
+  dataUpdatedAt
+} = usePosts({
+  staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
+  refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes when window is focused
+});
+</script>
 <template>
   <DashboardLayout>
     <div class="w-full h-full flex items-center justify-center bg-gray-100">
@@ -79,33 +100,10 @@
   </DashboardLayout>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { Button } from '@/components/ui/button'
-import { usePosts } from '@/composables/queries/usePosts'
-
-import DashboardLayout from '@/layouts/DashboardLayout.vue'
-
-// Use the posts query
-const { 
-  data, 
-  isLoading, 
-  error, 
-  refetch, 
-  isRefetching,
-  isFetching,
-  isStale,
-  dataUpdatedAt
-} = usePosts({
-  // Optional: Custom options for this specific usage
-  staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
-  refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes when window is focused
-})
-</script>
-
 <style scoped>
 .line-clamp-2 {
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -113,6 +111,7 @@ const {
 
 .line-clamp-3 {
   display: -webkit-box;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;

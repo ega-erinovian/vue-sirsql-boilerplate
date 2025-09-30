@@ -29,15 +29,16 @@ const props = defineProps({
   variant: { type: String, required: false },
   collapsible: { type: String, required: false, default: "icon" },
   class: { type: null, required: false },
+  user: { type: Object, required: true },
 });
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+  // user: {
+  //   name: "shadcn",
+  //   email: "m@example.com",
+  //   avatar: "/avatars/shadcn.jpg",
+  // },
   teams: [
     {
       name: "Acme Inc",
@@ -172,7 +173,7 @@ const data = {
       <NavProjects :projects="data.projects" />
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <NavUser :user="props.user" />
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>
