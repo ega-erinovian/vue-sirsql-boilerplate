@@ -36,7 +36,7 @@ onBeforeMount(async () => {
     user.value = authStore.user
     
     // If still no user, redirect to login
-    if (!authStore.isAuthenticated) {
+    if (!authStore.token) {
       router.replace({ name: 'Login' })
       return
     }

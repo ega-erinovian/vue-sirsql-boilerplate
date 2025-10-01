@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { GalleryVerticalEnd } from "lucide-vue-next";
+// import { GalleryVerticalEnd } from "lucide-vue-next";
 import { useMutation } from '@tanstack/vue-query'
 import { useRouter } from "vue-router";
 import { authService } from "@/services/auth/auth.js";
@@ -23,10 +23,11 @@ const AuthMutation = useMutation({
       password: password.value
     });
 
+    // Separate token and user data
     const {accessToken, ...user} = data;
 
     // store user and token to pinia
-    authStore.setAuth(accessToken, user);
+    authStore.login(accessToken, user);
   },
   onSuccess: () => {
     router.push({ name: 'Dashboard' });
@@ -47,21 +48,20 @@ const authSubmitHandle = () => {
       <div class="flex justify-center gap-2 md:justify-start">
         <a href="#" class="flex items-center gap-2 font-medium">
           <div
-            class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground"
+            class="flex h-8 w-8 items-center justify-center text-primary-foreground"
           >
-            <GalleryVerticalEnd class-name="size-4" />
+             <img src="../assets/logo-rsql.webp" alt="logo-rsql">
           </div>
-          Acme Inc.
+          <span class="font-bold">
+            SITIQL
+          </span>
         </a>
       </div>
       <div class="flex flex-1 items-center justify-center">
         <div class="w-full max-w-xs">
           <form class="flex flex-col gap-6" @submit.prevent="authSubmitHandle">
             <div class="flex flex-col items-center gap-2 text-center">
-              <h1 class="text-2xl font-bold">Login to your account</h1>
-              <p class="text-muted-foreground text-sm text-balance">
-                Enter your username below to login to your account
-              </p>
+              <h1 class="text-2xl font-bold">Selamat Datang</h1>
             </div>
             <div class="grid gap-6">
               <div class="grid gap-3">
@@ -80,7 +80,7 @@ const authSubmitHandle = () => {
                 </div>
                 <Input v-model="password" id="password" type="password" required />
               </div>
-              <Button type="submit" class-name="w-full"> Login </Button>
+              <Button type="submit" class="w-full cursor-pointer"> Login </Button>
             </div>
             <div class="text-center text-sm">
               Don't have an account?

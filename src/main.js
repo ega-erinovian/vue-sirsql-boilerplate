@@ -14,20 +14,14 @@ const app = createApp(App)
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Data is considered stale after 5 minutes
-      staleTime: 5 * 60 * 1000,
-      // Cache data for 10 minutes
-      gcTime: 10 * 60 * 1000,
-      // Retry failed requests 2 times
-      retry: 2,
-      // Refetch on window focus
-      refetchOnWindowFocus: false,
-      // Refetch on reconnect
-      refetchOnReconnect: true,
+      staleTime: 5 * 60 * 1000, // Data is considered stale after 5 minutes
+      gcTime: 10 * 60 * 1000, // Cache data for 10 minutes
+      retry: 2, // Retry failed requests 2 times
+      refetchOnWindowFocus: false, // Refetch on window focus
+      refetchOnReconnect: true, // Refetch on reconnect
     },
     mutations: {
-      // Retry failed mutations once
-      retry: 1,
+      retry: 1, // Retry failed mutations once
     },
   },
 })

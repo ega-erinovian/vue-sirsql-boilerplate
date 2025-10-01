@@ -5,22 +5,25 @@ export const useAuthStore = defineStore("auth", {
         token: null,
         user: null,
         isLoading: true,
-        isAuthenticated: false,
     }),
     actions: {
-        setAuth(token, user) {
+        login(token, user) {
             this.isLoading = true;
             
             try {
                 this.token = token;
                 this.user = user;
-                this.isAuthenticated = true;
             } catch (error) {
                 console.error("Error setting auth:", error);
             } finally {
-
                 this.isLoading = false;
             }
+        },
+        logout(){
+            this.token = null;
+            this.user = null;
+
+            localStorage.removeItem('auth');
         }
     },
     persist: true,
