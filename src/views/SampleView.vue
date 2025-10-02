@@ -1,4 +1,5 @@
 <script setup>
+import { ArticleCard, ErrorFetch, LoadingPost } from '@/components/features/sample';
 import { Button } from '@/components/ui/button'
 import { usePosts } from '@/composables/queries/usePosts'
 
@@ -35,42 +36,16 @@ const {
         </div>
 
         <!-- Loading State -->
-        <div v-if="isLoading" class="flex justify-center items-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          <span class="ml-2">Loading posts...</span>
-        </div>
+        <LoadingPost v-if="isLoading" />
 
         <!-- Error State -->
-        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-          <div class="text-red-800">
-            <strong>Error:</strong> {{ error.message }}
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            class="mt-2"
-            @click="refetch"
-          >
-            Try Again
-          </Button>
-        </div>
+        <ErrorFetch v-else-if="error" :errorMessage = error.message /> 
 
         <!-- Success State with Data -->
         <div v-else-if="data && data.length > 0">
           <!-- Posts List -->
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div 
-              v-for="post in data.slice(0, 12)" 
-              :key="post.id"
-              class="bg-white p-4 rounded-lg shadow-sm border hover:shadow-md transition-shadow"
-            >
-              <h3 class="font-semibold text-sm mb-2 line-clamp-2">
-                {{ post.title }}
-              </h3>
-              <p class="text-gray-600 text-xs line-clamp-3">
-                {{ post.body }}
-              </p>
-            </div>
+            <ArticleCard v-for="post in data.slice(0, 12)" :key="post.id" :title="post.title" :body="post.body" /> 
           </div>
 
           <!-- Data Info -->
