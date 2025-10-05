@@ -23,7 +23,6 @@ const props = defineProps({
   variant: { type: String, required: false },
   collapsible: { type: String, required: false, default: "icon" },
   class: { type: null, required: false },
-  user: { type: Object, required: true },
 });
 
 // This is dummy data.

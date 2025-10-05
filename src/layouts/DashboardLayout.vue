@@ -30,28 +30,26 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const user = ref({});
+const loading = ref(true) // Add a loading state
 
 onBeforeMount(async () => {
-  try {
-    // Try to get user from store first
-    user.value = authStore.user
-    
-    // If still no user, redirect to login
-    if (!authStore.token) {
-      router.replace({ name: 'Login' })
-      return
-    }
-  } catch (error) {
-    console.error('Failed to load user:', error)
-    // Redirect to login on error
-    router.push({ name: 'Login' })
+  // Try to load user from store
+  user.value = authStore.user
+
+  // Check if the token is expired or not present
+  if (!authStore.token || authStore.isTokenExpired(authStore.token)) {
+    // If no token or expired, redirect to login page
+    authStore.logout()  // Ensure the store is cleared
+    router.replace({ name: 'Login' })
+  } else {
+    loading.value = false // Set loading to false once the user data is loaded
   }
 })
 </script>
 
 <template>
    <!-- Show loading state while checking authentication -->
-  <div v-if="authStore.isLoading" class="flex items-center justify-center min-h-screen">
+  <div v-if="loading" class="flex items-center justify-center min-h-screen">
     <div class="flex flex-col items-center gap-4">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
       <p class="text-sm text-muted-foreground">Loading...</p>

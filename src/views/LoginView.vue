@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from "vue";
-// import { GalleryVerticalEnd } from "lucide-vue-next";
+import { onMounted, ref } from "vue";
 import { useMutation } from '@tanstack/vue-query'
 import { useRouter } from "vue-router";
 import { authService } from "@/services/auth/auth.js";
@@ -14,6 +13,11 @@ const authStore = useAuthStore();
 
 const username = ref("");
 const password = ref("");
+
+// Load token on mount
+onMounted(() => {
+  authStore.loadFromStorage();
+});
 
 const AuthMutation = useMutation({
   mutationFn: async () => {
@@ -45,23 +49,13 @@ const authSubmitHandle = () => {
 <template>
   <div class="grid min-h-svh lg:grid-cols-2">
     <div class="flex flex-col gap-4 p-6 md:p-10">
-      <div class="flex justify-center gap-2 md:justify-start">
-        <a href="#" class="flex items-center gap-2 font-medium">
-          <div
-            class="flex h-8 w-8 items-center justify-center text-primary-foreground"
-          >
-             <img src="../assets/logo-rsql.webp" alt="logo-rsql">
-          </div>
-          <span class="font-bold">
-            SITIQL
-          </span>
-        </a>
-      </div>
       <div class="flex flex-1 items-center justify-center">
         <div class="w-full max-w-xs">
           <form class="flex flex-col gap-6" @submit.prevent="authSubmitHandle">
-            <div class="flex flex-col items-center gap-2 text-center">
-              <h1 class="text-2xl font-bold">Selamat Datang</h1>
+            <div class="flex flex-col items-center gap-4 text-center">
+              <div class="w-16 h-16">
+                <img src="../assets/logo-rsql.webp" alt="logo-rsql">
+              </div>
             </div>
             <div class="grid gap-6">
               <div class="grid gap-3">
@@ -80,11 +74,13 @@ const authSubmitHandle = () => {
                 </div>
                 <Input v-model="password" id="password" type="password" required />
               </div>
-              <Button type="submit" class="w-full cursor-pointer"> Login </Button>
-            </div>
-            <div class="text-center text-sm">
-              Don't have an account?
-              <a href="#" class="underline underline-offset-4"> Sign up </a>
+              <Button 
+                type="submit" 
+                class="w-full cursor-pointer" 
+                :disabled="AuthMutation.isPending.value"
+              > 
+                {{ AuthMutation.isPending.value ? 'Loading...' : 'Login' }}
+              </Button>
             </div>
           </form>
         </div>
