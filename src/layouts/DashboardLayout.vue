@@ -7,6 +7,7 @@ export const containerClass = "w-full h-full"
 
 <script setup>
 import AppSidebar from "@/components/AppSidebar.vue"
+import NavUser from "@/components/NavUser.vue"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -60,7 +61,8 @@ onBeforeMount(async () => {
   <SidebarProvider v-else>
     <AppSidebar :user="user" />
     <SidebarInset>
-      <header class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+      <header class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]">
+      <div class="flex w-full items-center justify-between pe-2">
         <div class="flex items-center gap-2 px-4">
           <SidebarTrigger class="-ml-1" />
           <Separator orientation="vertical" class="mr-2 h-4" />
@@ -78,6 +80,10 @@ onBeforeMount(async () => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
+        <div>
+          <NavUser :user="user" />
+        </div>
+      </div>
       </header>
       <slot />
     </SidebarInset>
