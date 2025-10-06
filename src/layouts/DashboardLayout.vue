@@ -7,6 +7,7 @@ export const containerClass = "w-full h-full"
 
 <script setup>
 import AppSidebar from "@/components/AppSidebar.vue"
+import LoadingScreen from "@/components/LoadingScreen.vue"
 import NavUser from "@/components/NavUser.vue"
 import {
   Breadcrumb,
@@ -44,19 +45,17 @@ onBeforeMount(async () => {
     router.push({ name: 'Login' })
   } else {
     authStore.checkAndRefreshToken();
-    loading.value = false
+    setTimeout(() => {
+      
+      loading.value = false
+    }, 1500);
   }
 })
 </script>
 
 <template>
    <!-- Show loading state while checking authentication -->
-  <div v-if="loading" class="flex items-center justify-center min-h-screen">
-    <div class="flex flex-col items-center gap-4">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-      <p class="text-sm text-muted-foreground">Loading...</p>
-    </div>
-  </div>
+  <LoadingScreen v-if="loading" />
 
   <SidebarProvider v-else>
     <AppSidebar :user="user" />
