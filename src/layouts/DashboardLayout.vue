@@ -23,6 +23,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/store/auth"
+import Cookies from "js-cookie"
 import { onBeforeMount, ref } from "vue"
 import { useRouter } from "vue-router"
 
@@ -33,16 +34,17 @@ const user = ref({});
 const loading = ref(true) // Add a loading state
 
 onBeforeMount(async () => {
-  // Try to load user from store
+  const accessToken = Cookies.get('accessToken');
+  
   user.value = authStore.user
 
   // Check if the token is expired or not present
-  if (!authStore.token || authStore.isTokenExpired(authStore.token)) {
-    // If no token or expired, redirect to login page
-    authStore.logout()  // Ensure the store is cleared
-    router.replace({ name: 'Login' })
+  if (!accessToken) {
+    authStore.logout()
+    router.push({ name: 'Login' })
   } else {
-    loading.value = false // Set loading to false once the user data is loaded
+    authStore.checkAndRefreshToken();
+    loading.value = false
   }
 })
 </script>

@@ -29,10 +29,6 @@ import { useRouter } from "vue-router";
 import { useMutation } from "@tanstack/vue-query";
 import { onBeforeMount, ref } from "vue";
 
-// const props = defineProps({
-//   user: { type: Object, required: true },
-// });
-
 const { isMobile } = useSidebar();
 
 const router = useRouter();
@@ -44,13 +40,12 @@ const fullName = ref("");
 
 onBeforeMount(async () => {
   try {
-    // Try to get user from store first
-    initialName.value = authStore.user.firstName[0] + authStore.user.lastName[0];
-    fullName.value = authStore.user.firstName + " " + authStore.user.lastName;
+    initialName.value = authStore.user.username[0];
+    fullName.value = authStore.user.username;
+    
   } catch (error) {
     console.error('Failed to load user:', error)
-    // Redirect to login on error
-    router.replace({ name: 'Login' })
+    router.go({ name: 'Login' })
   }
 })
 
@@ -59,7 +54,7 @@ const logoutMutation = useMutation({
     authStore.logout()
   },
   onSuccess: () => {
-    router.push({name: 'Login'})
+    router.go({name: 'Login'})
   },
   onError: (err) => {
     console.log(err);
@@ -81,7 +76,7 @@ const handleLogout = () => {
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer"
           >
             <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarFallback class="rounded-lg"> {{ initialName }} </AvatarFallback>
+              <AvatarFallback class="rounded-lg uppercase"> {{ initialName }} </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">{{ fullName }}</span>
@@ -99,7 +94,7 @@ const handleLogout = () => {
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarFallback class="rounded-lg"> {{ initialName }} </AvatarFallback>
+                <AvatarFallback class="rounded-lg uppercase"> {{ initialName }} </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ fullName }}</span>

@@ -5,7 +5,17 @@ import { authApiClient } from '@/api/authClient'
  */
 export const authService = {
   async login(payload) {
-    const response = await authApiClient.post('/auth/login', payload);
+    const response = await authApiClient.post('/login', payload);
+    console.log(response);
+    
+    return response;
+  },
+  async refreshToken(token) {
+    const response = await authApiClient.post('/refresh', null, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return response;
   }
 }
