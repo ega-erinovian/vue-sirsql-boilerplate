@@ -1,10 +1,13 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
-import { router } from './router'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin, QueryClient } from '@tanstack/vue-query'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+
+// Import Font Awesome CSS
+import '@fortawesome/fontawesome-free/css/all.css'
+import router from './router'
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate); // save store to localStorage

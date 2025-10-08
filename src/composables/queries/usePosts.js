@@ -1,5 +1,5 @@
+import { postsService } from '@/services/posts/postService'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
-import { postsService } from '@/services/posts/getPosts'
 
 /**
  * Query keys factory for posts

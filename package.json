@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "@tailwindcss/vite": "^4.1.13",
     "@tanstack/vue-query": "^5.90.2",
     "@tanstack/vue-query-devtools": "^5.90.2",

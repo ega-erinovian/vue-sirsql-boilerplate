@@ -5,88 +5,94 @@ import { defineStore } from "pinia";
 export const useAuthStore = defineStore("auth", {
     state: () => ({
         user: null,
-        token_expiry: null
+        tokenExpiry: null,
     }),
+    
     getters: {
-        isAuthenticated: (state) => !!Cookies.get('accessToken'),
+        isAuthenticated: (state) => {
+            const hasToken = !!Cookies.get('accessToken');
+            const hasValidExpiry = state.tokenExpiry && Date.now() < state.tokenExpiry;
+            return hasToken && hasValidExpiry && state.user !== null;
+        },
     },
+    
     actions: {
         login(data) {
-          const expiryTime = Date.now() + (data.expires_in * 1000);
-          Cookies.set('accessToken', data.token, { expires: data.expires_in / (60 * 60 * 24), path: '/' });
-          this.user = data.user;
-          this.token_expiry = expiryTime
-        },
-        logout() {
-          this.user = null;
-          this.token_expiry = null;
-          Cookies.remove('accessToken');
-          localStorage.removeItem('auth');
-        },
-        async loadFromStorage() {
-          const storedAuth = localStorage.getItem('auth');
-          if (storedAuth) { // Fixed: should be if (storedAuth), not if (!storedAuth)
-            const { user } = JSON.parse(storedAuth);
+            const expiryTime = Date.now() + (data.expires_in * 1000);
             
-            // If the token is expired or about to expire, refresh it
-            if (this.isTokenExpired()) {
-              try {
-                const accessToken = Cookies.get('accessToken');
-                if (!accessToken) {
-                    this.logout();
-                    return;
-                }
-                // Refresh token (await the async call)
+            Cookies.set('accessToken', data.token, { 
+                expires: data.expires_in / (60 * 60 * 24), 
+                path: '/',
+                secure: true,
+                sameSite: 'strict'
+            });
+            
+            this.user = data.user;
+            this.tokenExpiry = expiryTime;
+        },
+        
+        logout() {
+            this.user = null;
+            this.tokenExpiry = null;
+            Cookies.remove('accessToken', { path: '/' });
+        },
+        
+        isTokenExpiringSoon() {
+            if (!this.tokenExpiry) return true;
+            // Check if token expires in the next 5 minutes
+            const bufferTime = 5 * 60 * 1000;
+            return Date.now() > (this.tokenExpiry - bufferTime);
+        },
+        
+        async refreshToken() {
+            const accessToken = Cookies.get('accessToken');
+            
+            if (!accessToken) {
+                throw new Error('No access token available');
+            }
+            
+            try {
                 const { data } = await authService.refreshToken(accessToken);
-                // Update with new token
                 const expiryTime = Date.now() + (data.data.expires_in * 1000);
+                
                 Cookies.set('accessToken', data.data.token, { 
                     expires: data.data.expires_in / (60 * 60 * 24), 
-                    path: '/' 
+                    path: '/',
+                    secure: true,
+                    sameSite: 'strict'
                 });
-                this.user = user;
+                
                 this.tokenExpiry = expiryTime;
-              } catch (error) {
+                return true;
+            } catch (error) {
                 console.error('Token refresh failed:', error);
                 this.logout();
-              }
-            } else {
-              // Token is still valid
-              this.user = user;
+                throw error;
             }
-          }
         },
-        isTokenExpired() {
-          if (!this.tokenExpiry) {
-              return true; // No expiry time means token is considered expired
-          }
-          
-          // Check if token expires in the next 5 minutes (300000 ms)
-          const bufferTime = 5 * 60 * 1000;
-          return Date.now() > (this.tokenExpiry - bufferTime);
-        },
-        async checkAndRefreshToken() {
-          if (this.isTokenExpired() && Cookies.get('accessToken')) {
-            try {
-              const accessToken = Cookies.get('accessToken');
-              const { data } = await authService.refreshToken(accessToken);
-              const expiryTime = Date.now() + (data.data.expires_in * 1000);
-
-              Cookies.set('accessToken', data.data.token, { 
-                  expires: data.data.expires_in / (60 * 60 * 24), 
-                  path: '/' 
-              });
-
-              this.tokenExpiry = expiryTime;
-              return true;
-            } catch (error) {
-              console.error('Token refresh failed:', error);
-              this.logout();
-              return false;
+        
+        // Only check if token needs refresh while app is active
+        async checkAndRefreshIfNeeded() {
+            if (!this.isAuthenticated) {
+                return false;
             }
-          }
-          return true;
+            
+            if (this.isTokenExpiringSoon()) {
+                try {
+                    await this.refreshToken();
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+            
+            return true;
         }
     },
-    persist: true,
+    
+    // Only persist user and tokenExpiry in sessionStorage (clears when browser closes)
+    persist: {
+        storage: sessionStorage,
+        paths: ['user', 'tokenExpiry']
+    },
 })

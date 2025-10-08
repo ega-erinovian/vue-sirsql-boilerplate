@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useMutation } from '@tanstack/vue-query'
 import { useRouter } from "vue-router";
 import { authService } from "@/services/auth/auth.js";
@@ -13,36 +13,32 @@ const authStore = useAuthStore();
 
 const username = ref("");
 const password = ref("");
+const errorMessage = ref("");
 
-// Load token on mount
-onMounted(() => {
-  authStore.loadFromStorage();
-});
-
-const AuthMutation = useMutation({
+const authMutation = useMutation({
   mutationFn: async () => {
-    // login
     const { data } = await authService.login({
       username: username.value,
       password: password.value
     });
-
-    // store user and token to pinia
+    
     authStore.login(data.data);
   },
   onSuccess: () => {
-    router.push({ name: 'Dashboard' });
+    router.push({ name: 'Beranda' });
   },
   onError: (error) => {
     console.error("Login failed:", error);
-    alert("Login failed. Please check your credentials and try again.");
+    errorMessage.value = error.response?.data?.message || "Login failed. Please check your credentials.";
   }
 });
 
 const authSubmitHandle = () => {
-  AuthMutation.mutate();
+  errorMessage.value = "";
+  authMutation.mutate();
 };
 </script>
+
 <template>
   <div class="grid min-h-svh lg:grid-cols-2">
     <div class="flex flex-col gap-4 p-6 md:p-10">
@@ -54,10 +50,23 @@ const authSubmitHandle = () => {
                 <img src="../assets/logo-rsql.webp" alt="logo-rsql">
               </div>
             </div>
+            
+            <!-- Error message -->
+            <div v-if="errorMessage" class="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded">
+              {{ errorMessage }}
+            </div>
+            
             <div class="grid gap-6">
               <div class="grid gap-3">
                 <Label for="username">Username</Label>
-                <Input v-model="username" id="username" type="text" placeholder="johnDoe" required />
+                <Input 
+                  v-model="username" 
+                  id="username" 
+                  type="text" 
+                  placeholder="johnDoe" 
+                  required 
+                  :disabled="authMutation.isPending.value"
+                />
               </div>
               <div class="grid gap-3">
                 <div class="flex items-center">
@@ -69,14 +78,20 @@ const authSubmitHandle = () => {
                     Forgot your password?
                   </a>
                 </div>
-                <Input v-model="password" id="password" type="password" required />
+                <Input 
+                  v-model="password" 
+                  id="password" 
+                  type="password" 
+                  required 
+                  :disabled="authMutation.isPending.value"
+                />
               </div>
               <Button 
                 type="submit" 
                 class="w-full cursor-pointer" 
-                :disabled="AuthMutation.isPending.value"
+                :disabled="authMutation.isPending.value"
               > 
-                {{ AuthMutation.isPending.value ? 'Loading...' : 'Login' }}
+                {{ authMutation.isPending.value ? 'Loading...' : 'Login' }}
               </Button>
             </div>
           </form>

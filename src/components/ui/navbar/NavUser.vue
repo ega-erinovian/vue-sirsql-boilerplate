@@ -1,8 +1,7 @@
 <script setup>
 import {
-  ChevronsUpDown,
   LogOut,
-  Settings,
+  Settings
 } from "lucide-vue-next";
 
 import {
@@ -25,9 +24,9 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useAuthStore } from "@/store/auth";
-import { useRouter } from "vue-router";
 import { useMutation } from "@tanstack/vue-query";
 import { onBeforeMount, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const { isMobile } = useSidebar();
 
@@ -45,7 +44,7 @@ onBeforeMount(async () => {
     
   } catch (error) {
     console.error('Failed to load user:', error)
-    router.go({ name: 'Login' })
+    router.push({ name: 'Login' })
   }
 })
 
@@ -54,7 +53,7 @@ const logoutMutation = useMutation({
     authStore.logout()
   },
   onSuccess: () => {
-    router.go({name: 'Login'})
+    router.push({name: 'Login'})
   },
   onError: (err) => {
     console.log(err);
@@ -80,9 +79,7 @@ const handleLogout = () => {
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">{{ fullName }}</span>
-              <span class="truncate text-xs font-extralight">Superuser</span>
             </div>
-            <ChevronsUpDown class="ml-auto size-4" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -98,7 +95,6 @@ const handleLogout = () => {
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ fullName }}</span>
-                <span class="truncate text-xs">Superuser</span>
               </div>
             </div>
           </DropdownMenuLabel>
