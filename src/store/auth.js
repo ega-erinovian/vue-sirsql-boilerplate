@@ -22,8 +22,6 @@ export const useAuthStore = defineStore("auth", {
             
             Cookies.set('accessToken', data.token, { 
                 expires: data.expires_in / (60 * 60 * 24), 
-                path: '/',
-                secure: true,
                 sameSite: 'strict'
             });
             
@@ -57,8 +55,6 @@ export const useAuthStore = defineStore("auth", {
                 
                 Cookies.set('accessToken', data.data.token, { 
                     expires: data.data.expires_in / (60 * 60 * 24), 
-                    path: '/',
-                    secure: true,
                     sameSite: 'strict'
                 });
                 

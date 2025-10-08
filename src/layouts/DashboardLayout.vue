@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useMenusByUserId } from "@/composables/queries/useMenus"
 import { useAuthStore } from "@/store/auth"
+import { useSidebarStore } from "@/store/sidebar"
 import Cookies from "js-cookie"
 import { computed, onMounted, onUnmounted } from "vue"
 

@@ -1,15 +1,6 @@
 <script setup>
 import NavMain from '@/components/NavMain.vue';
 import {
-  Bot,
-  BriefcaseMedical,
-  ChartLine,
-  IdCard,
-  PillBottle,
-  Stethoscope
-} from "lucide-vue-next";
-
-import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -17,6 +8,8 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import NavLogo from "./NavLogo.vue";
+import { useSidebarStore } from '@/store/sidebar';
+import { onBeforeMount, onMounted } from 'vue';
 
 const props = defineProps({
   side: { type: String, required: false },
@@ -121,6 +114,15 @@ const props = defineProps({
 //     ],
 //   },
 // ];
+
+const sidebarStore = useSidebarStore();
+
+onBeforeMount(() => {
+  // Check and refresh token every 4 minutes
+  if((props.menus || props.menus.length > 0) && sidebarStore.menus.length === 0){
+    sidebarStore.setMenus(props.menus)
+  }
+});
 </script>
 
 <template>
@@ -129,7 +131,7 @@ const props = defineProps({
       <NavLogo />
     </SidebarHeader>
     <SidebarContent>
-      <NavMain :items="menus" />
+      <NavMain :items="sidebarStore.menus" />
     </SidebarContent>
     <SidebarFooter>
     </SidebarFooter>
