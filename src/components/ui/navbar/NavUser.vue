@@ -21,18 +21,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '@/components/ui/sidebar';
 import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/vue-query";
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
-
-const { isMobile } = useSidebar();
+import { useSidebarStore } from "@/store/sidebar";
 
 const router = useRouter();
 
 const authStore = useAuthStore();
+const sidebarStore = useSidebarStore();
 
 const initialName = ref("");
 const fullName = ref("");
@@ -53,6 +52,7 @@ const logoutMutation = useMutation({
     authStore.logout()
   },
   onSuccess: () => {
+    sidebarStore.clearMenus();
     router.push({name: 'Login'})
   },
   onError: (err) => {

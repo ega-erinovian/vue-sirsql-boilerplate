@@ -1,5 +1,6 @@
 <script setup>
 import AppSidebar from "@/components/AppSidebar.vue"
+import LoadingScreen from "@/components/LoadingScreen.vue"
 import NavBreadcrumb from "@/components/ui/navbar/NavBreadcrumb.vue"
 import NavUser from "@/components/ui/navbar/NavUser.vue"
 import { Separator } from "@/components/ui/separator"
@@ -49,7 +50,9 @@ const user = computed(() => authStore.user);
 </script>
 
 <template>
-  <SidebarProvider>
+  <LoadingScreen v-if="isLoading" />
+
+  <SidebarProvider v-else>
     <AppSidebar :menus="data?.data || []"/>
     <SidebarInset>
       <header class="flex h-16 bg-white shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]] sticky top-0 shadow-md shadow-b-2">

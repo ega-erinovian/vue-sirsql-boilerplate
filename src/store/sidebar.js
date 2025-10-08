@@ -8,6 +8,7 @@ export const useSidebarStore = defineStore("sidebar", {
         },
         clearMenus(){
             this.menus = [];
+            localStorage.removeItem("sidebar");
         }
     },
     
