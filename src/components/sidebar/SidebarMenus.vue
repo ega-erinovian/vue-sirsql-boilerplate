@@ -1,5 +1,4 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
 import {
   Popover,
   PopoverContent,
@@ -11,20 +10,28 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { ChevronRight, Dot } from "lucide-vue-next";
+import { ChevronRight, Dot, Home } from "lucide-vue-next";
+import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from "vue-router";
 
 const props = defineProps({
-  items: { type: Array, required: true }
+  items: { type: Array, required: true },
+  currentPath: { type: String, required: true },
 });
 
-// Track open state for each menu item
+// Constants
+const HOVER_DELAY = 150;
+const ITEM_ACTIVE_CLASS = "bg-white text-black";
+const SUB_ITEM_ACTIVE_CLASS = "border-l-8 border-brand-primary font-semibold";
+
+// State
 const openMenus = ref({});
 const hoverTimeouts = ref({});
 const nestedOpenMenus = ref({});
 const nestedHoverTimeouts = ref({});
+const iconComponents = ref({});
 
-// Handle main menu hover
+// Hover handlers for main menu
 const handleMouseEnter = (itemId) => {
   if (hoverTimeouts.value[itemId]) {
     clearTimeout(hoverTimeouts.value[itemId]);
@@ -35,26 +42,21 @@ const handleMouseEnter = (itemId) => {
 const handleMouseLeave = (itemId) => {
   hoverTimeouts.value[itemId] = setTimeout(() => {
     openMenus.value[itemId] = false;
-    // Close all nested menus when main menu closes
-    Object.keys(nestedOpenMenus.value).forEach(key => {
-      if (key.startsWith(`${itemId}-`)) {
-        nestedOpenMenus.value[key] = false;
-      }
-    });
-  }, 150);
+    closeNestedMenus(itemId);
+  }, HOVER_DELAY);
 };
 
-// Handle nested submenu hover
+// Hover handlers for nested submenu
 const handleNestedMouseEnter = (parentId, subItemId) => {
   const key = `${parentId}-${subItemId}`;
-  // Clear timeout for this submenu
+  
   if (nestedHoverTimeouts.value[key]) {
     clearTimeout(nestedHoverTimeouts.value[key]);
   }
-  // Also keep parent menu open
   if (hoverTimeouts.value[parentId]) {
     clearTimeout(hoverTimeouts.value[parentId]);
   }
+  
   nestedOpenMenus.value[key] = true;
 };
 
@@ -62,12 +64,20 @@ const handleNestedMouseLeave = (parentId, subItemId) => {
   const key = `${parentId}-${subItemId}`;
   nestedHoverTimeouts.value[key] = setTimeout(() => {
     nestedOpenMenus.value[key] = false;
-  }, 150);
+  }, HOVER_DELAY);
 };
 
-// Helper function to sort items by menu_order
+// Helper functions
+const closeNestedMenus = (parentId) => {
+  Object.keys(nestedOpenMenus.value).forEach(key => {
+    if (key.startsWith(`${parentId}-`)) {
+      nestedOpenMenus.value[key] = false;
+    }
+  });
+};
+
 const sortByMenuOrder = (items) => {
-  if (!items || items.length === 0) return [];
+  if (!items?.length) return [];
   
   return [...items].sort((a, b) => {
     const orderA = a.menu_order ?? Infinity;
@@ -76,9 +86,8 @@ const sortByMenuOrder = (items) => {
   });
 };
 
-// Helper function to recursively sort items and their children
 const sortItemsRecursively = (items) => {
-  if (!items || items.length === 0) return [];
+  if (!items?.length) return [];
   
   return sortByMenuOrder(items).map(item => ({
     ...item,
@@ -86,22 +95,55 @@ const sortItemsRecursively = (items) => {
   }));
 };
 
-// Computed property for sorted items
-const sortedItems = computed(() => sortItemsRecursively(props.items));
+const setActiveMenuClass = (item, subItem, nestedSubItem = null) => {
+  const target = nestedSubItem || subItem;
+  
+  if (target.path === props.currentPath) {
+    item.activeMenuClass = ITEM_ACTIVE_CLASS;
+    target.activeMenuClass = SUB_ITEM_ACTIVE_CLASS;
+  } else {
+    item.activeMenuClass = "";
+    target.activeMenuClass = "";
+  }
+};
 
-const iconComponents = ref({});
+const loadIcons = async (items) => {
+  const imports = {};
+  
+  for (const item of items) {
+    if (item.icon) {
+      imports[item.icon] = await import(`@tabler/icons-vue`)
+        .then((module) => module[item.icon]);
+    }
+  }
+  
+  return imports;
+};
 
-onMounted(async () => {
-  if(props.items && props.items.length > 0){
-    const imports = {};
-
-    for(const item of props.items){
-      if(item.icon){
-        imports[item.icon] = await import(`@tabler/icons-vue`).then((module) => module[item.icon]);
+const processMenuItems = (items) => {
+  for (const item of items) {
+    if (!item.children?.length) continue;
+    
+    for (const subItem of item.children) {
+      setActiveMenuClass(item, subItem);
+      
+      if (subItem.children?.length) {
+        for (const nestedSubItem of subItem.children) {
+          setActiveMenuClass(item, subItem, nestedSubItem);
+        }
       }
     }
+  }
+};
 
-    iconComponents.value = imports;
+// Computed
+const sortedItems = computed(() => sortItemsRecursively(props.items));
+
+// Lifecycle
+onMounted(async () => {
+  if (props.items?.length) {
+    iconComponents.value = await loadIcons(props.items);
+    processMenuItems(props.items);
   }
 });
 </script>
@@ -109,11 +151,33 @@ onMounted(async () => {
 <template>
   <SidebarGroup>
     <SidebarMenu>
-      <SidebarMenuItem v-for="item in sortedItems" :key="item.id" class="text-white">
+      <!-- Home menu item -->
+      <SidebarMenuItem class="text-white">
+        <RouterLink to="/" class="cursor-pointer">
+          <SidebarMenuButton tooltip="Beranda" class="cursor-pointer">
+            <Home />
+            <span>Beranda</span>
+          </SidebarMenuButton>
+        </RouterLink>
+      </SidebarMenuItem>
+
+      <!-- Dynamic menu items -->
+      <SidebarMenuItem 
+        v-for="item in sortedItems" 
+        :key="item.id" 
+        class="text-white"
+      >
         <!-- Simple link item (no children) -->
-        <RouterLink v-if="!item.children || item.children.length === 0" :to="item.path" class="cursor-pointer">
+        <RouterLink 
+          v-if="!item.children?.length" 
+          :to="item.path" 
+          class="cursor-pointer"
+        >
           <SidebarMenuButton :tooltip="item.nama_menu" class="cursor-pointer">
-            <component v-if="iconComponents[item.icon]" :is="iconComponents[item.icon]" />
+            <component 
+              v-if="iconComponents[item.icon]" 
+              :is="iconComponents[item.icon]" 
+            />
             <span>{{ item.nama_menu }}</span>
           </SidebarMenuButton>
         </RouterLink>
@@ -128,12 +192,19 @@ onMounted(async () => {
             @mouseenter="handleMouseEnter(item.id)"
             @mouseleave="handleMouseLeave(item.id)"
           >
-            <SidebarMenuButton class="cursor-pointer text-md">
-              <component v-if="iconComponents[item.icon]" :is="iconComponents[item.icon]" />
+            <SidebarMenuButton 
+              class="cursor-pointer text-md" 
+              :class="item.activeMenuClass"
+            >
+              <component 
+                v-if="iconComponents[item.icon]" 
+                :is="iconComponents[item.icon]" 
+              />
               <span>{{ item.nama_menu }}</span>
               <ChevronRight class="ml-auto" />
             </SidebarMenuButton>
           </PopoverTrigger>
+
           <PopoverContent
             side="right"
             align="start"
@@ -143,14 +214,16 @@ onMounted(async () => {
             @mouseleave="handleMouseLeave(item.id)"
           >
             <div>
+              <!-- Submenu header -->
               <div class="px-3 py-2 font-bold text-md bg-stone-950 text-white rounded-tr-lg">
                 {{ item.nama_menu }}
               </div>
               <div class="border-t border-gray-200" />
               
+              <!-- Submenu items -->
               <template v-for="(subItem, index) in item.children" :key="subItem.id">
-                <!-- Nested popover sub-menu for items with children -->
-                <div v-if="subItem.children && subItem.children.length > 0" class="relative">
+                <!-- Nested popover sub-menu (has children) -->
+                <div v-if="subItem.children?.length" class="relative">
                   <Popover v-model:open="nestedOpenMenus[`${item.id}-${subItem.id}`]">
                     <PopoverTrigger
                       as-child
@@ -162,6 +235,7 @@ onMounted(async () => {
                         <ChevronRight class="w-4 h-4" />
                       </div>
                     </PopoverTrigger>
+
                     <PopoverContent
                       side="right"
                       align="start"
@@ -183,17 +257,21 @@ onMounted(async () => {
                   </Popover>
                 </div>
                 
-                <!-- Regular menu item for items without children -->
+                <!-- Regular menu item (no children) -->
                 <RouterLink 
                   v-else 
                   :to="subItem.path" 
                   class="block px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 m-1 rounded group"
+                  :class="subItem.activeMenuClass"
                 >
                   <span class="group-hover:font-bold">{{ subItem.nama_menu }}</span>
                 </RouterLink>
                 
-                <!-- Separator between items (except last one) -->
-                <div v-if="index < item.children.length - 1" class="border-t border-gray-200 mx-2" />
+                <!-- Separator between items -->
+                <div 
+                  v-if="index < item.children.length - 1" 
+                  class="border-t border-gray-200 mx-2" 
+                />
               </template>
             </div>
           </PopoverContent>

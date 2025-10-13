@@ -1,29 +1,39 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
-import Cookies from 'js-cookie'
-import LoginView from '@/views/LoginView.vue'
-import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import LoginView from '@/views/auth/LoginView.vue'
 import HomeView from '@/views/HomeView.vue'
 import SampleView from '@/views/SampleView.vue'
+import EditUserView from '@/views/user/EditUserView.vue'
+import Cookies from 'js-cookie'
+import { createRouter, createWebHistory } from 'vue-router'
 
 // Your existing routes
 const routes = [
+  // auth
   {
     path: '/login',
     name: 'Login',
     component: LoginView,
     meta: { requiresAuth: false }
   },
+  // Home
   {
     path: '/',
     name: 'Beranda',
     component: HomeView,
     meta: { requiresAuth: true }
   },
+  // Pelayanan
   {
     path: '/pelayanan/rawat-jalan',
     name: 'Rawat Jalan',
     component: SampleView,
+    meta: { requiresAuth: true }
+  },
+  // User
+  {
+    path: '/konfigurasi-sistem/user/edit',
+    name: 'Edit User',
+    component: EditUserView,
     meta: { requiresAuth: true }
   },
 ]
@@ -41,6 +51,11 @@ router.beforeEach(async (to, from, next) => {
   
   // Route requires authentication
   if (requiresAuth) {
+    // Ask user to change their password on first login
+    // if(authStore.isFirstLogin && to.name !== 'Edit User'){
+    //   return next({ name: 'Edit User' })
+    // }
+
     // No token at all - redirect to login
     if (!hasToken) {
       return next({ name: 'Login' })

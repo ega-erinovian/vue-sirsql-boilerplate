@@ -37,7 +37,7 @@ const delegatedProps = reactiveOmit(props, "tooltip");
 
   <Tooltip v-else>
     <TooltipTrigger as-child>
-      <SidebarMenuButtonChild v-bind="{ ...delegatedProps, ...$attrs }" class="rounded-sm py-5 hover:bg-brand-surface-foreground hover:text-white hover:border-2 hover:border-brand-primary active:bg-brand-primary active:text-white">
+      <SidebarMenuButtonChild v-bind="{ ...delegatedProps, ...$attrs }" class="rounded-sm text-md">
         <slot />
       </SidebarMenuButtonChild>
     </TooltipTrigger>

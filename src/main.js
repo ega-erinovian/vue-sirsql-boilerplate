@@ -4,9 +4,6 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin, QueryClient } from '@tanstack/vue-query'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-
-// Import Font Awesome CSS
-import '@fortawesome/fontawesome-free/css/all.css'
 import router from './router'
 
 const pinia = createPinia()
@@ -28,7 +25,6 @@ const queryClient = new QueryClient({
     },
   },
 })
-
 app.use(router)
 app.use(pinia)
 app.use(VueQueryPlugin, {

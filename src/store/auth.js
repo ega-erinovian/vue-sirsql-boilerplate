@@ -6,6 +6,7 @@ export const useAuthStore = defineStore("auth", {
     state: () => ({
         user: null,
         tokenExpiry: null,
+        isFirstLogin: null,
     }),
     
     getters: {
@@ -27,6 +28,7 @@ export const useAuthStore = defineStore("auth", {
             
             this.user = data.user;
             this.tokenExpiry = expiryTime;
+            this.isFirstLogin = data.is_first_login
         },
         
         logout() {

@@ -51,6 +51,15 @@
   --color-brand-accent: var(--brand-accent);
   --color-brand-surface: var(--brand-surface);
   --color-brand-surface-foreground: var(--brand-surface-foreground);
+  /* New bootstrap color variables */
+  --color-bs-primary: var(--bs-primary);
+  --color-bs-secondary: var(--bs-secondary);
+  --color-bs-success: var(--bs-success);
+  --color-bs-info: var(--bs-info);
+  --color-bs-warning: var(--bs-warning);
+  --color-bs-danger: var(--bs-danger);
+  --color-bs-light: var(--bs-light);
+  --color-bs-dark: var(--bs-dark)
 }
 
 :root {
@@ -87,11 +96,22 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
   /* add brand palette derived from the logo (teal + orange) */
   --brand-primary: oklch(0.65 0.12 210); /* teal/blue */
   --brand-accent: oklch(0.8 0.16 80); /* orange/amber */
   --brand-surface: oklch(0.98 0.02 210); /* very light teal surface */
   --brand-surface-foreground: oklch(0.22 0.04 210); 
+
+  /* bootstrap color class */
+  --bs-primary: #0d6efd; /* Primary color */
+  --bs-secondary: #6c757d; /* Secondary color */
+  --bs-success: #198754; /* Success color (Bootstrap Green) */
+  --bs-info: #0dcaf0; /* Info color (Bootstrap Light Blue) */
+  --bs-warning: #ffc107; /* Warning color (Bootstrap Yellow) */
+  --bs-danger: #dc3545; /* Danger color (Bootstrap Red) */
+  --bs-light: #f8f9fa; /* Light color */
+  --bs-dark: #212529; /* Dark color */
 }
 
 .dark {
@@ -127,6 +147,15 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+  /* bootstrap color */
+  --bs-primary: #0d6efd; /* Primary color */
+  --bs-secondary: #6c757d; /* Secondary color */
+  --bs-success: #198754; /* Success color (Bootstrap Green) */
+  --bs-info: #0dcaf0; /* Info color (Bootstrap Light Blue) */
+  --bs-warning: #ffc107; /* Warning color (Bootstrap Yellow) */
+  --bs-danger: #dc3545; /* Danger color (Bootstrap Red) */
+  --bs-light: #f8f9fa; /* Light color */
+  --bs-dark: #212529; /* Dark color */
 }
 
 @layer base {

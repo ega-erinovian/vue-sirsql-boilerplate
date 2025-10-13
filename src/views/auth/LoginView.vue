@@ -47,7 +47,7 @@ const authSubmitHandle = () => {
           <form class="flex flex-col gap-6" @submit.prevent="authSubmitHandle">
             <div class="flex flex-col items-center gap-4 text-center">
               <div class="w-16 h-16">
-                <img src="../assets/logo-rsql.webp" alt="logo-rsql">
+                <img src="/logo-ql.png" alt="logo-rsql">
               </div>
             </div>
             
