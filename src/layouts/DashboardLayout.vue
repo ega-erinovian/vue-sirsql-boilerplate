@@ -10,19 +10,24 @@ import {
 import { useMenusByUserId } from "@/composables/queries/useMenus"
 import { useAuthStore } from "@/store/auth"
 import Cookies from "js-cookie"
-import { computed, onMounted, onUnmounted } from "vue"
+import { computed, onMounted, onUnmounted, ref } from "vue"
+import { toast } from "vue3-toastify"
 
 const authStore = useAuthStore();
 
 const userId = computed(() => authStore.user?.id);
-const accessToken = computed(() => Cookies.get('accessToken') || "");
+const accessToken = ref(Cookies.get('accessToken') || "");
+
+const queryEnabled = computed(() => {
+  const enabled = !!accessToken.value && !!userId.value;
+  return enabled;
+});
 
 // Fetch menus
 const { data, isLoading } = useMenusByUserId(
   userId,
-  accessToken,
   {
-    enabled: computed(() => !!accessToken.value && !!userId.value),
+    enabled: queryEnabled,
     staleTime: 5 * 60 * 1000,
   }
 );
@@ -31,6 +36,11 @@ const { data, isLoading } = useMenusByUserId(
 let refreshInterval = null;
 
 onMounted(() => {
+  if (authStore.accessDenied) {
+    toast.error("Not allowed to open the page!");
+    authStore.clearAccessDenied();
+  }
+
   // Check and refresh token every 4 minutes
   refreshInterval = setInterval(async () => {
     await authStore.checkAndRefreshIfNeeded();

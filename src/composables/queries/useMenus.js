@@ -14,14 +14,13 @@ export const menusKeys = {
  * Hook to get all posts by user id
  * @param {Object} options - Query options
  */
-export function useMenusByUserId(userId, token, options = {}) {
+export function useMenusByUserId(userId, options = {}) {
   return useQuery({
     queryKey: computed(() => ['menus', 'user', toValue(userId)]),
     queryFn: async () => {
         const userIdVal = toValue(userId)
-        const tokenVal = toValue(token)
         
-        const result = await getMenusByUserId(userIdVal, tokenVal)  
+        const result = await getMenusByUserId(userIdVal)  
         
         // Return the actual data based on what getMenusByUserId returns
         return result?.response || result || []

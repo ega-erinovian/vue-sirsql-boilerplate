@@ -1,12 +1,15 @@
 import { authService } from "@/services/auth/auth";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
+import { toast } from 'vue3-toastify'
 
 export const useAuthStore = defineStore("auth", {
     state: () => ({
         user: null,
         tokenExpiry: null,
         isFirstLogin: null,
+        allowedPath: [],
+        accessDenied: null,
     }),
     
     getters: {
@@ -30,10 +33,28 @@ export const useAuthStore = defineStore("auth", {
             this.tokenExpiry = expiryTime;
             this.isFirstLogin = data.is_first_login
         },
+
+        setAllowedPath(path){
+            if (Array.isArray(this.allowedPath)) {
+                this.allowedPath.push(path);
+            } else {
+                this.allowedPath = [path];
+            }
+        },
+
+        setAccessDenied() {
+            this.accessDenied = true;
+          },
+          
+        clearAccessDenied() {
+          this.accessDenied = null
+        },
         
         logout() {
             this.user = null;
             this.tokenExpiry = null;
+            this.allowedPath = [];
+            this.accessDenied = null;
             Cookies.remove('accessToken', { path: '/' });
         },
         

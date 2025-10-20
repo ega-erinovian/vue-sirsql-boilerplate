@@ -1,4 +1,6 @@
 <script setup>
+import { grupOptions, profesiOptions } from "@/components/features/user/edit/const";
+import Select2 from "@/components/Select2.vue";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -8,10 +10,10 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useGetSelectedValue } from "@/composables/helper/useGetSelectedValue";
 import { useJwtDecoder } from "@/composables/helper/useJwtDecoder";
 import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/vue-query";
-import Cookies from "js-cookie";
 import { useForm } from "vee-validate";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -48,12 +50,6 @@ const schema = yup.object({
     ),
 });
 
-onMounted(() => {
-  // decodeToken(Cookies.get("accessToken"));
-
-  console.log(user);
-});
-
 // Form fields
 const nip = ref(user.NIP || "-");
 const sip = ref(user.NIP || "-");
@@ -62,8 +58,8 @@ const pegawai = ref(user.nama_user || "-");
 // const status = ref("aktif");
 // const titleDepan = ref(null);
 // const titleBelakang = ref("S.Kom");
-// const profesi = ref(0);
-// const grup = ref(8);
+const profesi = ref(1);
+const grup = ref(8);
 const username = ref(user.username || "-");
 
 // Vee-Validate setup
@@ -73,8 +69,8 @@ const { errors, handleSubmit, defineField, values } = useForm({
     sip: sip.value,
     pegawai: pegawai.value,
     // status: status.value,
-    // profesi: profesi.value,
-    // grup: grup.value,
+    profesi: profesi.value,
+    grup: grup.value,
     username: username.value
   },
   validationSchema: schema,
@@ -84,8 +80,8 @@ const [nipField] = defineField("nip");
 const [sipField] = defineField("sip");
 const [pegawaiField] = defineField("pegawai");
 // const [statusField] = defineField('status');
-// const [profesiField] = defineField('profesi');
-// const [grupField] = defineField('grup');
+const [profesiField] = defineField('profesi');
+const [grupField] = defineField('grup');
 const [usernameField] = defineField("username");
 const [curPasswordField] = defineField("curPassword");
 const [passwordField] = defineField("password");
@@ -136,15 +132,15 @@ const cancelButtonHandler = async () => {
   router.push({ name: "Login" });
 };
 
-// const getSelected = useGetSelectedValue();
+const getSelected = useGetSelectedValue();
 
-// const handleChange = (option) => {
-//   console.log("Selected:", option);
-// };
+const handleChange = (option) => {
+  console.log("Selected:", option);
+};
 
-// const handleSearch = (query) => {
-//   console.log("Searching:", query);
-// };
+const handleSearch = (query) => {
+  console.log("Searching:", query);
+};
 </script>
 <template>
   <div
@@ -249,11 +245,11 @@ const cancelButtonHandler = async () => {
                   />
                 </div>
               </Field> -->
-              <!-- <Field>
+              <Field>
                 <FieldLabel>Profesi</FieldLabel>
                 <Select2
-                  v-model="profesi"
-                  :options="grupOptions"
+                  v-model="profesiField"
+                  :options="profesiOptions"
                   valueKey="idperan"
                   labelKey="namaperan"
                   :debounceMs="500"
@@ -265,7 +261,7 @@ const cancelButtonHandler = async () => {
               <Field>
                 <FieldLabel :important="true">Grup</FieldLabel>
                 <Select2
-                  v-model="grup"
+                  v-model="grupField"
                   :options="grupOptions"
                   valueKey="idperan"
                   labelKey="namaperan"
@@ -275,7 +271,7 @@ const cancelButtonHandler = async () => {
                   @search="handleSearch"
                 />
                 <FieldError v-if="errors.grup">Grup tidak valid.</FieldError>
-              </Field> -->
+              </Field>
               <Field>
                 <FieldLabel for="username"> Username </FieldLabel>
                 <Input

@@ -24,7 +24,6 @@ const {
   <DashboardLayout>
     <div class="w-full h-full flex items-center justify-center bg-gray-100">
       <div class="container mx-auto p-4">
-        <!-- Control Buttons -->
         <div class="flex gap-4 mb-8">
           <Button 
             class="hover:cursor-pointer" 
@@ -35,10 +34,8 @@ const {
           </Button>
         </div>
 
-        <!-- Loading State -->
         <LoadingPost v-if="isLoading" />
 
-        <!-- Error State -->
         <ErrorFetch v-else-if="error" :errorMessage = error.message /> 
 
         <!-- Success State with Data -->
