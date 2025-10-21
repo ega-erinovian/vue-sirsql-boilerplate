@@ -25,7 +25,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/vue-query";
 import { onBeforeMount, ref } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { useSidebarStore } from "@/store/sidebar";
 
 const router = useRouter();
@@ -99,10 +99,12 @@ const handleLogout = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
+            <RouterLink to="/konfigurasi-sistem/user/edit">
             <DropdownMenuItem>
-              <Settings />
-              Settings
-            </DropdownMenuItem>
+                <Settings />
+                Settings
+              </DropdownMenuItem>
+            </RouterLink>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem @click="handleLogout">

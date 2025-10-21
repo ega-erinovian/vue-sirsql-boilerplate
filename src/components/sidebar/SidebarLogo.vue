@@ -27,7 +27,7 @@ import {
                 <AvatarImage src="/logo-ql.png" alt="@unovue" />
               </Avatar>
               <div class="grid flex-1 text-sm ms-2">
-                <span class="truncate font-bold text-4xl text-white">SITIQL</span>
+                <span class="truncate font-bold text-4xl">SITIQL</span>
               </div>
             </SidebarMenuButton>
           </RouterLink>

@@ -22,7 +22,7 @@ const {
 </script>
 <template>
   <DashboardLayout>
-    <div class="w-full h-full flex items-center justify-center bg-gray-100">
+    <div class="w-full h-full flex items-center justify-center">
       <div class="container mx-auto p-4">
         <div class="flex gap-4 mb-8">
           <Button 

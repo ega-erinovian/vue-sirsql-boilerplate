@@ -1,11 +1,14 @@
-import { useAuthStore } from "@/store/auth";
-import HomeView from "@/views/HomeView.vue";
 import Cookies from "js-cookie";
+import { useAuthStore } from "@/store/auth";
 import { createRouter, createWebHistory } from "vue-router";
+import { allowedRoutes } from "./consts";
+
+import HomeView from "@/views/HomeView.vue";
+
 import { authRoutes } from "./routes/auth";
 import { pelayananRoutes } from "./routes/pelayanan";
-import { konfigurasiSistemRoutes } from "./routes/konfigurasiSistem";
 import { asuransiRoutes } from "./routes/asuransi";
+import konfigurasiSistemRoutes from "./routes/konfigurasiSistem";
 
 // Your existing routes
 const routes = [
@@ -18,7 +21,7 @@ const routes = [
   ...authRoutes,
   ...pelayananRoutes,
   ...konfigurasiSistemRoutes,
-  ...asuransiRoutes
+  ...asuransiRoutes,
 ];
 
 const router = createRouter({
@@ -39,7 +42,6 @@ router.beforeEach(async (to, from, next) => {
     //   return next({ name: 'Edit User' })
     // }
 
-    // No token at all - redirect to login
     if (!hasToken) {
       return next({ name: "Login" });
     }
@@ -66,8 +68,14 @@ router.beforeEach(async (to, from, next) => {
       }
     }
 
-    if(authStore.isAuthenticated && authStore.allowedPath.length > 0 && to.name !== "Beranda"){
-      if(!authStore.allowedPath.includes(to.path)){
+    // AuthGuard
+    if (
+      authStore.isAuthenticated &&
+      authStore.allowedPath.length > 0 &&
+      to.name !== "Beranda" &&
+      !allowedRoutes.includes(to.path)
+    ) {
+      if (!authStore.allowedPath.includes(to.path)) {
         authStore.setAccessDenied();
         return next({ name: "Beranda" });
       }

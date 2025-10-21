@@ -7,6 +7,7 @@ import {
   SidebarInset,
   SidebarProvider
 } from "@/components/ui/sidebar"
+import { Spinner } from "@/components/ui/spinner"
 import { useMenusByUserId } from "@/composables/queries/useMenus"
 import { useAuthStore } from "@/store/auth"
 import Cookies from "js-cookie"
@@ -54,22 +55,27 @@ onUnmounted(() => {
 });
 
 const user = computed(() => authStore.user);
+const isFirstLogin = authStore.isFirstLogin;
 </script>
 
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <SidebarProvider v-else>
+  <SidebarProvider v-else-if="!isFirstLogin">
     <SidebarComponent :menus="data?.data || []" />
-    <SidebarInset>
+    <SidebarInset class="bg-brand-primary">
       <NavbarComponent :user="user" />
 
       <!-- Loading state for menus -->
-      <div v-if="isLoading" class="flex items-center justify-center h-64">
+      <div v-if="isLoading" class="flex items-center justify-center h-64 gap-4">
+        <Spinner />
         <p class="text-muted-foreground">Loading...</p>
       </div>
-      
-      <slot v-else />
+      <div v-else class="p-4">
+        <slot />
+      </div>
     </SidebarInset>
   </SidebarProvider>
+
+  <slot v-else />
 </template>

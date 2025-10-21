@@ -1,7 +1,6 @@
 import { authService } from "@/services/auth/auth";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
-import { toast } from 'vue3-toastify'
 
 export const useAuthStore = defineStore("auth", {
     state: () => ({
@@ -55,6 +54,7 @@ export const useAuthStore = defineStore("auth", {
             this.tokenExpiry = null;
             this.allowedPath = [];
             this.accessDenied = null;
+            this.isFirstLogin = null;
             Cookies.remove('accessToken', { path: '/' });
         },
         

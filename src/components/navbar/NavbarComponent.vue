@@ -10,7 +10,7 @@ const props = defineProps({
 
 </script>
 <template>
-    <header class="flex h-16 bg-white shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]] sticky top-0 shadow-md shadow-b-2">
+    <header class="flex h-12 bg-[url('https://sisdmql.qlgroup.cloud/img/triangle-mosaic.webp')] shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]] sticky top-0 shadow-md shadow-b-2">
         <div class="flex w-full items-center justify-between pe-2">
           <div class="flex items-center gap-2 px-4">
             <SidebarTrigger class="-ml-1 text-cyan-950" />

@@ -1,15 +1,11 @@
+import SampleView from "@/views/SampleView.vue";
+
 export const pelayananRoutes = [
   {
-    path: "/pelayanan",
-    name: "Pelayanan",
+    path: "/pelayanan/rawat-jalan",
+    name: "Rawat Jalan",
+    component: SampleView,
     meta: { requiresAuth: true },
-    children: [
-      {
-        path: "rawat-jalan",
-        name: "Rawat Jalan",
-        component: () => import("@/views/SampleView.vue"),
-      },
-    ],
   },
   // Add more pelayanan routes here...
 ];

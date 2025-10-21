@@ -21,7 +21,7 @@ const props = defineProps({
 
 // Constants
 const HOVER_DELAY = 150;
-const ITEM_ACTIVE_CLASS = "bg-white text-black";
+const ITEM_ACTIVE_CLASS = "bg-stone-200";
 const SUB_ITEM_ACTIVE_CLASS = "border-l-8 border-brand-primary font-semibold";
 
 // State
@@ -152,9 +152,9 @@ onMounted(async () => {
   <SidebarGroup>
     <SidebarMenu>
       <!-- Home menu item -->
-      <SidebarMenuItem class="text-white">
+      <SidebarMenuItem class="">
         <RouterLink to="/" class="cursor-pointer">
-          <SidebarMenuButton tooltip="Beranda" class="cursor-pointer">
+          <SidebarMenuButton tooltip="Beranda" class="cursor-pointer" :class="(currentPath == '/' ? ITEM_ACTIVE_CLASS : '')">
             <Home />
             <span>Beranda</span>
           </SidebarMenuButton>
@@ -165,7 +165,7 @@ onMounted(async () => {
       <SidebarMenuItem 
         v-for="item in sortedItems" 
         :key="item.id" 
-        class="text-white"
+        class=""
       >
         <!-- Simple link item (no children) -->
         <RouterLink 
@@ -208,17 +208,17 @@ onMounted(async () => {
           <PopoverContent
             side="right"
             align="start"
-            :side-offset="10"
-            class="min-w-56 p-0 shadow-2xl rounded-lg"
+            :side-offset="12"
+            class="min-w-56 p-0 shadow-2xl rounded-lg border-none pb-1"
             @mouseenter="handleMouseEnter(item.id)"
             @mouseleave="handleMouseLeave(item.id)"
           >
             <div>
               <!-- Submenu header -->
-              <div class="px-3 py-2 font-bold text-md bg-stone-950 text-white rounded-tr-lg">
+              <div class="px-3 py-2 font-bold text-md bg-zinc-900 text-white rounded-tr-lg">
                 {{ item.nama_menu }}
               </div>
-              <div class="border-t border-gray-200" />
+              <div class="border-t border-stone-300" />
               
               <!-- Submenu items -->
               <template v-for="(subItem, index) in item.children" :key="subItem.id">
@@ -230,7 +230,7 @@ onMounted(async () => {
                       @mouseenter="handleNestedMouseEnter(item.id, subItem.id)"
                       @mouseleave="handleNestedMouseLeave(item.id, subItem.id)"
                     >
-                      <div class="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 flex items-center justify-between">
+                      <div class="px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 flex items-center justify-between rounded-md m-1">
                         <span>{{ subItem.nama_menu }}</span>
                         <ChevronRight class="w-4 h-4" />
                       </div>
@@ -248,9 +248,8 @@ onMounted(async () => {
                         v-for="nestedItem in subItem.children"
                         :key="nestedItem.id"
                         :to="nestedItem.path"
-                        class="flex items-center gap-1 px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 rounded"
+                        class="flex items-center gap-1 px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 rounded"
                       >
-                        <Dot class="w-6 h-6" />
                         {{ nestedItem.nama_menu }}
                       </RouterLink>
                     </PopoverContent>
@@ -261,7 +260,7 @@ onMounted(async () => {
                 <RouterLink 
                   v-else 
                   :to="subItem.path" 
-                  class="block px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 m-1 rounded group"
+                  class="block px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 m-1 rounded group"
                   :class="subItem.activeMenuClass"
                 >
                   <span class="group-hover:font-bold">{{ subItem.nama_menu }}</span>
@@ -270,7 +269,7 @@ onMounted(async () => {
                 <!-- Separator between items -->
                 <div 
                   v-if="index < item.children.length - 1" 
-                  class="border-t border-gray-200 mx-2" 
+                  class="border-t border-stone-200 mx-2" 
                 />
               </template>
             </div>
