@@ -1,6 +1,6 @@
 <script setup>
-import AlertComponent from "@/components/AlertComponent.vue";
-import FormInputComponent from "@/components/FormInputComponent.vue";
+import AlertComponent from "@/components/common/AlertComponent.vue";
+import FormInputComponent from "@/components/common/FormInputComponent.vue";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FieldGroup, FieldSet } from "@/components/ui/field";

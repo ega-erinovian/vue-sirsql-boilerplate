@@ -34,7 +34,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="flex gap-2 items-center justify-between py-4">
+  <div class="flex gap-2 items-center justify-between pb-4">
     <slot name="actions" />
 
     <div class="flex gap-4">

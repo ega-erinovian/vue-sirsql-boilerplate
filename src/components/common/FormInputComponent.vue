@@ -53,7 +53,7 @@ const model = defineModel({ type: String, required: true });
       :type="type"
       :placeholder="placeholder"
       :class="{ 'border-red-500': error }"
-      :readonly="readonly"
+      :disabled="readonly"
       :required="required"
     />
     <FieldError v-if="error">{{ error }}</FieldError>

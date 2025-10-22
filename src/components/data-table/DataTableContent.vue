@@ -41,7 +41,7 @@ const props = defineProps({
 
 const emit = defineEmits(["rowClick"]);
 
-const handleRowClick = (row) => {
+const handleRowClick = (row, event) => {
   emit("rowClick", row);
 };
 

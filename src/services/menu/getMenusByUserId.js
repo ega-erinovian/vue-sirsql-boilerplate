@@ -5,8 +5,8 @@ import apiClient from "@/api/client"
  * @returns {Promise<Array>} Array of menus
  */
 async function getMenusByUserId(userId) {
-  const response = await apiClient.get(`/menu/user/${userId}`);
-  return response;
+  const result = await apiClient.get(`/menu/user/${userId}`);
+  return result.data;
 }
 
 export default getMenusByUserId;

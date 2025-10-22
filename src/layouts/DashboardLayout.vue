@@ -1,5 +1,5 @@
 <script setup>
-import LoadingScreen from "@/components/LoadingScreen.vue"
+import LoadingScreen from "@/components/common/LoadingScreen.vue"
 import NavbarComponent from "@/components/navbar/NavbarComponent.vue"
 import SidebarComponent from "@/components/sidebar/SidebarComponent.vue"
 
@@ -25,7 +25,7 @@ const queryEnabled = computed(() => {
 });
 
 // Fetch menus
-const { data, isLoading } = useMenusByUserId(
+const { data: sidebarMenu, isLoading } = useMenusByUserId(
   userId,
   {
     enabled: queryEnabled,
@@ -55,14 +55,14 @@ onUnmounted(() => {
 });
 
 const user = computed(() => authStore.user);
-const isFirstLogin = authStore.isFirstLogin;
+const isFirstLogin = !authStore.isFirstLogin;
 </script>
 
 <template>
   <LoadingScreen v-if="isLoading" />
 
   <SidebarProvider v-else-if="!isFirstLogin">
-    <SidebarComponent :menus="data?.data || []" />
+    <SidebarComponent :menus="sidebarMenu?.data || []" />
     <SidebarInset class="bg-brand-primary">
       <NavbarComponent :user="user" />
 

@@ -17,10 +17,6 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log("🔍 [API Client] Request config:", {
-      url: config.url,
-      hasAuthHeader: !!config.headers.Authorization
-    });
     return config;
   },
   (error) => {

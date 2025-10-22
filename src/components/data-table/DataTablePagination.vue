@@ -18,7 +18,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="flex items-center justify-end space-x-2 py-4">
+  <div class="flex items-center justify-end space-x-2 pt-4">
     <div v-if="enableSelection" class="flex-1 text-sm text-muted-foreground">
       {{ table.getFilteredSelectedRowModel().rows.length }} of
       {{ table.getFilteredRowModel().rows.length }} row(s) selected.

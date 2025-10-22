@@ -8,8 +8,8 @@ defineProps({
 </script>
 
 <template>
-  <Card :class="cardClass">
-    <CardContent :class="contentClass">
+  <Card :class="['rounded-md p-0', cardClass]">
+    <CardContent :class="['p-4', contentClass]">
       <slot />
     </CardContent>
   </Card>

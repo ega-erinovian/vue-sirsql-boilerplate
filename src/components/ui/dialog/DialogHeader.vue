@@ -8,7 +8,9 @@ const props = defineProps({
 
 <template>
   <div
-    data-slot="skeleton"
-    :class="cn('animate-pulse rounded-md bg-primary/20', props.class)"
-  />
+    data-slot="dialog-header"
+    :class="cn('flex flex-col gap-2 text-center sm:text-left', props.class)"
+  >
+    <slot />
+  </div>
 </template>

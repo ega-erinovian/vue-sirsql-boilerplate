@@ -1,6 +1,6 @@
 <script setup>
 import { AlertCircle, Check, Info, MessageCircleWarning } from 'lucide-vue-next';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 defineProps({
   title: { type: String, default: '' },

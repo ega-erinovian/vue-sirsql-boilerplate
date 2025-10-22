@@ -1,10 +1,12 @@
 /* * Example: How to use the reusable DataTable component */
 
 <script setup>
-import ButtonTooltip from "@/components/ButtonTooltip.vue";
+import ButtonTooltip from "@/components/common/ButtonTooltipComponent.vue";
+import EmptyResult from "@/components/common/EmptyResult.vue";
+import PageTitle from "@/components/common/PageTitle.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
-import LoadingScreen from "@/components/LoadingScreen.vue";
-import { Button } from "@/components/ui/button";
+import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAllMenus } from "@/composables/queries/useMenus";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
@@ -15,16 +17,15 @@ import {
   createSortableColumn,
 } from "@/lib/tableColumnHelpers";
 import { createColumnHelper } from "@tanstack/vue-table";
-import { Pencil, Plus, Trash } from "lucide-vue-next";
+import { Pencil, Trash } from "lucide-vue-next";
 import { h } from "vue";
+import { useRouter } from "vue-router";
 
-const {
-  data: menus,
-  isLoading,
-  isError,
-} = useAllMenus({
+const { data: menus, isLoading } = useAllMenus({
   staleTime: 5 * 60 * 1000,
 });
+
+const router = useRouter();
 
 // Define columns
 const columnHelper = createColumnHelper();
@@ -33,11 +34,15 @@ const columns = [
   // Selection column
   createSelectionColumn(columnHelper),
 
+  createSortableColumn(columnHelper, "menu_order", "Order"),
+
   // Menu Name column
   createSortableColumn(columnHelper, "nama_menu", "Nama Menu"),
 
   // Path column
   createSortableColumn(columnHelper, "path", "Path"),
+
+  createSortableColumn(columnHelper, "icon", "Icon"),
 
   // Status badge column
   createBadgeColumn(columnHelper, "is_active", "Status", {
@@ -51,8 +56,11 @@ const columns = [
         ButtonTooltip,
         {
           tooltip: "Edit",
-          color:"warning",
-          onBtnClick: () => console.log("Edit", row.original.nama_menu),
+          color: "warning",
+          onBtnClick: () => {
+            event?.stopPropagation(); // prevent row click
+            console.log("Edit", row.original.nama_menu);
+          },
         },
         () => h(Pencil, { class: "p-[2px]" })
       ),
@@ -60,8 +68,11 @@ const columns = [
         ButtonTooltip,
         {
           tooltip: "Hapus",
-          color:"danger",
-          onBtnClick: () => console.log("Delete", row.original.nama_menu),
+          color: "danger",
+          onBtnClick: () => {
+            event?.stopPropagation(); // prevent row click
+            console.log("Delete", row.original.nama_menu);
+          },
         },
         () => h(Trash, { class: "p-[2px]" })
       ),
@@ -95,37 +106,48 @@ const getCellColor = (columnId, row, index) => {
   }
   return "";
 };
+
+const handleRefreshPage = () => {
+  router.go();
+};
 </script>
 
 <template>
-  <LoadingScreen v-if="isLoading" />
+  <DashboardLayout>
+    <div class="w-full mx-auto grid gap-4">
+      <PageTitle title="Sidebar Menu" />
+      <CardLayout>
+        <div v-if="isLoading" class="grid gap-4">
+          <Skeleton class="h-10" />
+          <Skeleton class="h-96" />
+        </div>
+        <div v-else>
+          <DataTable
+            v-if="menus"
+            :data="menus.data"
+            :columns="columns"
+            :filter-column="['nama_menu', 'icon']"
+            filter-placeholder="Search name"
+            :show-column-visibility="true"
+            :show-pagination="true"
+            :enable-selection="true"
+            :page-size="10"
+            :cell-class-name="getCellColor"
+            @row-click="handleRowClick"
+            @selection-change="handleSelectionChange"
+          >
+            <template #empty>
+              <div class="text-center">
+                <p class="text-muted-foreground">No menu items found.</p>
+              </div>
+            </template>
 
-  <DashboardLayout v-else>
-    <div class="w-full mx-auto">
-      <CardLayout cardClass="rounded-md p-0" contentClass="px-4">
-        <DataTable
-          :data="menus.data"
-          :columns="columns"
-          :filter-column="['nama_menu', 'icon']"
-          filter-placeholder="Search name"
-          :show-column-visibility="true"
-          :show-pagination="true"
-          :enable-selection="true"
-          :page-size="10"
-          :cell-class-name="getCellColor"
-          @row-click="handleRowClick"
-          @selection-change="handleSelectionChange"
-        >
-          <template #empty>
-            <div class="text-center py-8">
-              <p class="text-muted-foreground">No menu items found.</p>
-            </div>
-          </template>
-
-          <template #actions>
-            <Button class="bg-bs-success hover:bg-bs-success-dark cursor-pointer"><Plus />Add</Button>
-          </template>
-        </DataTable>
+            <template #actions>
+              <AddMenuModal />
+            </template>
+          </DataTable>
+          <EmptyResult v-else @refresh-btn-click="handleRefreshPage" />
+        </div>
       </CardLayout>
     </div>
   </DashboardLayout>

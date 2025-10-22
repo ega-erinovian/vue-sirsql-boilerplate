@@ -15,6 +15,7 @@
   </template>
   
   <script setup>
-import ECGWaveLoader from './ui/ecg-wave-loader/ECGWaveLoader.vue';
+import ECGWaveLoader from '../ui/ecg-wave-loader/ECGWaveLoader.vue';
+
 
   </script>

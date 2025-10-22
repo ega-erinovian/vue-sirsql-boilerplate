@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from "vue";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
+} from "../ui/tooltip";
 
 const props = defineProps({
   tooltip: { type: String, required: true },
