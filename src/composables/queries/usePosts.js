@@ -1,13 +1,13 @@
-import { postsService } from '@/services/posts/postService'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
+import { postsService } from "@/services/posts/postService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
 
 /**
  * Query keys factory for posts
  */
 export const postsKeys = {
-  all: ['posts'],
+  all: ["posts"],
   lists: () => [...postsKeys.all],
-}
+};
 
 /**
  * Hook to get all posts
@@ -17,6 +17,6 @@ export function usePosts(options = {}) {
   return useQuery({
     queryKey: postsKeys.lists(),
     queryFn: postsService.getPosts,
-    ...options
-  })
+    ...options,
+  });
 }

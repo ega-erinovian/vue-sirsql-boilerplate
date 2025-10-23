@@ -1,4 +1,4 @@
-import apiClient from "@/api/client"
+import apiClient from "@/api/client";
 
 /**
  * Get sidebar menus by user id
@@ -6,7 +6,7 @@ import apiClient from "@/api/client"
  */
 async function getMenusByUserId(userId) {
   const result = await apiClient.get(`/menu/user/${userId}`);
-  return result.data;
+  return result;
 }
 
 export default getMenusByUserId;

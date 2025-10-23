@@ -2,16 +2,16 @@
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 import { ChevronRight, Dot, Home } from "lucide-vue-next";
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 
 const props = defineProps({
@@ -49,14 +49,14 @@ const handleMouseLeave = (itemId) => {
 // Hover handlers for nested submenu
 const handleNestedMouseEnter = (parentId, subItemId) => {
   const key = `${parentId}-${subItemId}`;
-  
+
   if (nestedHoverTimeouts.value[key]) {
     clearTimeout(nestedHoverTimeouts.value[key]);
   }
   if (hoverTimeouts.value[parentId]) {
     clearTimeout(hoverTimeouts.value[parentId]);
   }
-  
+
   nestedOpenMenus.value[key] = true;
 };
 
@@ -69,7 +69,7 @@ const handleNestedMouseLeave = (parentId, subItemId) => {
 
 // Helper functions
 const closeNestedMenus = (parentId) => {
-  Object.keys(nestedOpenMenus.value).forEach(key => {
+  Object.keys(nestedOpenMenus.value).forEach((key) => {
     if (key.startsWith(`${parentId}-`)) {
       nestedOpenMenus.value[key] = false;
     }
@@ -78,7 +78,7 @@ const closeNestedMenus = (parentId) => {
 
 const sortByMenuOrder = (items) => {
   if (!items?.length) return [];
-  
+
   return [...items].sort((a, b) => {
     const orderA = a.menu_order ?? Infinity;
     const orderB = b.menu_order ?? Infinity;
@@ -88,16 +88,16 @@ const sortByMenuOrder = (items) => {
 
 const sortItemsRecursively = (items) => {
   if (!items?.length) return [];
-  
-  return sortByMenuOrder(items).map(item => ({
+
+  return sortByMenuOrder(items).map((item) => ({
     ...item,
-    children: item.children ? sortItemsRecursively(item.children) : undefined
+    children: item.children ? sortItemsRecursively(item.children) : undefined,
   }));
 };
 
 const setActiveMenuClass = (item, subItem, nestedSubItem = null) => {
   const target = nestedSubItem || subItem;
-  
+
   if (target.path === props.currentPath) {
     item.activeMenuClass = ITEM_ACTIVE_CLASS;
     target.activeMenuClass = SUB_ITEM_ACTIVE_CLASS;
@@ -109,24 +109,25 @@ const setActiveMenuClass = (item, subItem, nestedSubItem = null) => {
 
 const loadIcons = async (items) => {
   const imports = {};
-  
+
   for (const item of items) {
     if (item.icon) {
-      imports[item.icon] = await import(`@tabler/icons-vue`)
-        .then((module) => module[item.icon]);
+      imports[item.icon] = await import(`@tabler/icons-vue`).then(
+        (module) => module[item.icon],
+      );
     }
   }
-  
+
   return imports;
 };
 
 const processMenuItems = (items) => {
   for (const item of items) {
     if (!item.children?.length) continue;
-    
+
     for (const subItem of item.children) {
       setActiveMenuClass(item, subItem);
-      
+
       if (subItem.children?.length) {
         for (const nestedSubItem of subItem.children) {
           setActiveMenuClass(item, subItem, nestedSubItem);
@@ -154,7 +155,11 @@ onMounted(async () => {
       <!-- Home menu item -->
       <SidebarMenuItem class="">
         <RouterLink to="/" class="cursor-pointer">
-          <SidebarMenuButton tooltip="Beranda" class="cursor-pointer" :class="(currentPath == '/' ? ITEM_ACTIVE_CLASS : '')">
+          <SidebarMenuButton
+            tooltip="Beranda"
+            class="cursor-pointer"
+            :class="currentPath == '/' ? ITEM_ACTIVE_CLASS : ''"
+          >
             <Home />
             <span>Beranda</span>
           </SidebarMenuButton>
@@ -162,43 +167,36 @@ onMounted(async () => {
       </SidebarMenuItem>
 
       <!-- Dynamic menu items -->
-      <SidebarMenuItem 
-        v-for="item in sortedItems" 
-        :key="item.id" 
-        class=""
-      >
+      <SidebarMenuItem v-for="item in sortedItems" :key="item.id" class="">
         <!-- Simple link item (no children) -->
-        <RouterLink 
-          v-if="!item.children?.length" 
-          :to="item.path" 
+        <RouterLink
+          v-if="!item.children?.length"
+          :to="item.path"
           class="cursor-pointer"
         >
           <SidebarMenuButton :tooltip="item.nama_menu" class="cursor-pointer">
-            <component 
-              v-if="iconComponents[item.icon]" 
-              :is="iconComponents[item.icon]" 
+            <component
+              v-if="iconComponents[item.icon]"
+              :is="iconComponents[item.icon]"
             />
             <span>{{ item.nama_menu }}</span>
           </SidebarMenuButton>
         </RouterLink>
 
         <!-- Popover menu item (has children) -->
-        <Popover 
-          v-else 
-          v-model:open="openMenus[item.id]"
-        >
-          <PopoverTrigger 
+        <Popover v-else v-model:open="openMenus[item.id]">
+          <PopoverTrigger
             as-child
             @mouseenter="handleMouseEnter(item.id)"
             @mouseleave="handleMouseLeave(item.id)"
           >
-            <SidebarMenuButton 
-              class="cursor-pointer text-md" 
+            <SidebarMenuButton
+              class="cursor-pointer text-md"
               :class="item.activeMenuClass"
             >
-              <component 
-                v-if="iconComponents[item.icon]" 
-                :is="iconComponents[item.icon]" 
+              <component
+                v-if="iconComponents[item.icon]"
+                :is="iconComponents[item.icon]"
               />
               <span>{{ item.nama_menu }}</span>
               <ChevronRight class="ml-auto" />
@@ -215,22 +213,31 @@ onMounted(async () => {
           >
             <div>
               <!-- Submenu header -->
-              <div class="px-3 py-2 font-bold text-md bg-zinc-900 text-white rounded-tr-lg">
+              <div
+                class="px-3 py-2 font-bold text-md bg-zinc-900 text-white rounded-tr-lg"
+              >
                 {{ item.nama_menu }}
               </div>
               <div class="border-t border-stone-300" />
-              
+
               <!-- Submenu items -->
-              <template v-for="(subItem, index) in item.children" :key="subItem.id">
+              <template
+                v-for="(subItem, index) in item.children"
+                :key="subItem.id"
+              >
                 <!-- Nested popover sub-menu (has children) -->
                 <div v-if="subItem.children?.length" class="relative">
-                  <Popover v-model:open="nestedOpenMenus[`${item.id}-${subItem.id}`]">
+                  <Popover
+                    v-model:open="nestedOpenMenus[`${item.id}-${subItem.id}`]"
+                  >
                     <PopoverTrigger
                       as-child
                       @mouseenter="handleNestedMouseEnter(item.id, subItem.id)"
                       @mouseleave="handleNestedMouseLeave(item.id, subItem.id)"
                     >
-                      <div class="px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 flex items-center justify-between rounded-md m-1">
+                      <div
+                        class="px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 flex items-center justify-between rounded-md m-1"
+                      >
                         <span>{{ subItem.nama_menu }}</span>
                         <ChevronRight class="w-4 h-4" />
                       </div>
@@ -255,21 +262,23 @@ onMounted(async () => {
                     </PopoverContent>
                   </Popover>
                 </div>
-                
+
                 <!-- Regular menu item (no children) -->
-                <RouterLink 
-                  v-else 
-                  :to="subItem.path" 
+                <RouterLink
+                  v-else
+                  :to="subItem.path"
                   class="block px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 m-1 rounded group"
                   :class="subItem.activeMenuClass"
                 >
-                  <span class="group-hover:font-bold">{{ subItem.nama_menu }}</span>
+                  <span class="group-hover:font-bold">{{
+                    subItem.nama_menu
+                  }}</span>
                 </RouterLink>
-                
+
                 <!-- Separator between items -->
-                <div 
-                  v-if="index < item.children.length - 1" 
-                  class="border-t border-stone-200 mx-2" 
+                <div
+                  v-if="index < item.children.length - 1"
+                  class="border-t border-stone-200 mx-2"
                 />
               </template>
             </div>

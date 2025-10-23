@@ -1,19 +1,19 @@
 // api/client.js
-import axios from 'axios'
-import Cookies from 'js-cookie'
+import axios from "axios";
+import Cookies from "js-cookie";
 
 // Create axios instance with base configuration
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-})
+});
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,7 +21,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // For Debugging ===============>
@@ -40,4 +40,4 @@ apiClient.interceptors.request.use(
 //   }
 // );
 
-export default apiClient
+export default apiClient;

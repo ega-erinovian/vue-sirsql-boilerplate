@@ -41,10 +41,11 @@ function useTableColumns() {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
           },
-          () => ["Email", h(ChevronsUpDown, { class: "ml-2 h-4 w-4" })]
+          () => ["Email", h(ChevronsUpDown, { class: "ml-2 h-4 w-4" })],
         );
       },
-      cell: ({ row }) => h("div", { class: "lowercase" }, row.getValue("email")),
+      cell: ({ row }) =>
+        h("div", { class: "lowercase" }, row.getValue("email")),
     }),
     columnHelper.accessor("amount", {
       header: () => h("div", { class: "text-right" }, "Amount"),

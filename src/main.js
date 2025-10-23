@@ -5,8 +5,8 @@ import { createPinia } from "pinia";
 import { VueQueryPlugin, QueryClient } from "@tanstack/vue-query";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import router from "./router";
-import Vue3Toastify from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
+import Vue3Toastify from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate); // save store to localStorage
@@ -35,11 +35,11 @@ app.use(VueQueryPlugin, {
 });
 app.use(Vue3Toastify, {
   autoClose: 3000,
-  position: 'top-right',
-  transition: 'bounce',
-  theme: 'colored',
+  position: "top-right",
+  transition: "bounce",
+  theme: "colored",
   style: {
-    fontWeight: 'bolder'
+    fontWeight: "bolder",
   },
-})
+});
 app.mount("#app");

@@ -1,7 +1,3 @@
-/* * Reusable Data Table Component * Usage:
-<DataTable :data="yourData" :columns="yourColumns" />
-*/
-
 <script setup>
 import { ref, computed } from "vue";
 import {
@@ -72,9 +68,14 @@ const props = defineProps({
     type: [String, Function],
     default: null,
   },
+  // API pagination data
+  pagination: {
+    type: Object,
+    default: null,
+  },
 });
 
-const emit = defineEmits(["rowClick", "selectionChange"]);
+const emit = defineEmits(["rowClick", "selectionChange", "pageChange"]);
 
 const sorting = ref([]);
 const columnFilters = ref([]);
@@ -164,10 +165,17 @@ const table = useVueTable({
       return globalFilter.value;
     },
   },
+  // Disable client-side pagination if using API pagination
+  manualPagination: props.pagination !== null,
+  pageCount: props.pagination?.total_pages ?? -1,
 });
 
 const handleRowClick = (row) => {
   emit("rowClick", row.original);
+};
+
+const handlePageChange = (page) => {
+  emit("pageChange", page);
 };
 </script>
 
@@ -199,6 +207,8 @@ const handleRowClick = (row) => {
       v-if="showPagination"
       :table="table"
       :enable-selection="enableSelection"
+      :pagination="pagination"
+      @page-change="handlePageChange"
     />
   </div>
 </template>

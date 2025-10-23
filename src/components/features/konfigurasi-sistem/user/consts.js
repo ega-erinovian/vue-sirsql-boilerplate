@@ -312,3 +312,97 @@ export const grupOptions = [
     namaperan: "MANAJER RADIOLOGI",
   },
 ];
+
+export const allUserResponse = {
+  status: "success",
+  message: "Data from cache",
+  data: [
+    {
+      id: "8",
+      nama_user: "superuser",
+      login_terakhir: "2025-10-22T20:11:24+07:00",
+    },
+    {
+      id: "39",
+      nama_user: "klaim",
+      login_terakhir: "2025-10-20T15:05:31+07:00",
+    },
+    {
+      id: "42",
+      nama_user: "ugd",
+      login_terakhir: "2023-10-05T11:10:42+07:00",
+    },
+    {
+      id: "43",
+      nama_user: "radiologi",
+      login_terakhir: "2023-10-05T11:54:36+07:00",
+    },
+    {
+      id: "44",
+      nama_user: "rehabmedik",
+      login_terakhir: "2021-04-13T12:32:00+07:00",
+    },
+    {
+      id: "48",
+      nama_user: "ranap",
+      login_terakhir: "2023-10-05T11:44:49+07:00",
+    },
+    {
+      id: "49",
+      nama_user: "poli",
+      login_terakhir: "2022-07-13T10:48:54+07:00",
+    },
+    {
+      id: "57",
+      nama_user: "Mellya",
+      login_terakhir: "2023-10-03T13:32:45+07:00",
+    },
+    {
+      id: "58",
+      nama_user: "Alivia",
+      login_terakhir: "2023-10-05T08:23:08+07:00",
+    },
+    {
+      id: "59",
+      nama_user: "Tamara",
+      login_terakhir: "2023-09-09T07:52:28+07:00",
+    },
+    {
+      id: "60",
+      nama_user: "Dani M",
+      login_terakhir: "2023-10-05T06:27:22+07:00",
+    },
+    {
+      id: "62",
+      nama_user: "Ana",
+      login_terakhir: "2023-09-04T08:57:13+07:00",
+    },
+    {
+      id: "67",
+      nama_user: "devita",
+      login_terakhir: "2023-10-05T11:05:52+07:00",
+    },
+    {
+      id: "69",
+      nama_user: "dokter",
+      login_terakhir: "2022-08-29T20:24:49+07:00",
+    },
+    {
+      id: "70",
+      nama_user: "sep",
+      login_terakhir: "2023-03-20T08:58:41+07:00",
+    },
+  ],
+  pagination: {
+    current_page: 1,
+    per_page: 10,
+    total: 373,
+    total_pages: 38,
+    has_next: true,
+    has_prev: false,
+  },
+  meta: {
+    timestamp: "2025-10-22T21:04:54+07:00",
+    request_id: "req_68f8e486a528e",
+  },
+};

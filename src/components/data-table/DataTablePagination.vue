@@ -1,45 +1,220 @@
-/*
- * Data Table Pagination
- */
+/* * Data Table Pagination with Numbered Pages */
 
 <script setup>
+import { computed } from "vue";
 import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
+import { PaginationList, PaginationListItem } from "reka-ui";
 
 const props = defineProps({
   table: {
     type: Object,
-    required: true
+    required: true,
   },
   enableSelection: {
     type: Boolean,
-    default: false
+    default: false,
+  },
+  pagination: {
+    type: Object,
+    default: null,
+  },
+});
+
+const emit = defineEmits(["pageChange"]);
+
+// Check if using API pagination or client-side pagination
+const isApiPagination = computed(() => props.pagination !== null);
+
+// Current page (1-indexed)
+const currentPage = computed(() => {
+  if (isApiPagination.value) {
+    return props.pagination.current_page;
   }
+  return props.table.getState().pagination.pageIndex + 1;
+});
+
+// Total pages
+const totalPages = computed(() => {
+  if (isApiPagination.value) {
+    return props.pagination.total_pages;
+  }
+  const pageCount = props.table.getPageCount();
+  // Fallback calculation if pageCount is not available
+  if (pageCount === 0 || pageCount === -1) {
+    const totalRows = props.table.getFilteredRowModel().rows.length;
+    const pageSize = props.table.getState().pagination.pageSize;
+    return Math.ceil(totalRows / pageSize);
+  }
+  return pageCount;
+});
+
+// Total items
+const totalItems = computed(() => {
+  if (isApiPagination.value) {
+    return props.pagination.total;
+  }
+  return props.table.getFilteredRowModel().rows.length;
+});
+
+// Items per page
+const itemsPerPage = computed(() => {
+  if (isApiPagination.value) {
+    return props.pagination.per_page;
+  }
+  return props.table.getState().pagination.pageSize;
+});
+
+// Generate page numbers to display
+const pageNumbers = computed(() => {
+  const total = totalPages.value;
+  const current = currentPage.value;
+  const pages = [];
+
+  if (total <= 0) return pages;
+
+  if (total <= 7) {
+    // Show all pages if 7 or fewer
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Always show first page
+    pages.push(1);
+
+    if (current > 3) {
+      pages.push("ellipsis-start");
+    }
+
+    // Show pages around current page
+    const start = Math.max(2, current - 1);
+    const end = Math.min(total - 1, current + 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (current < total - 2) {
+      pages.push("ellipsis-end");
+    }
+
+    // Always show last page
+    pages.push(total);
+  }
+
+  return pages;
+});
+
+const goToPage = (page) => {
+  if (isApiPagination.value) {
+    emit("pageChange", page);
+  } else {
+    props.table.setPageIndex(page - 1);
+  }
+};
+
+const goToFirstPage = () => {
+  goToPage(1);
+};
+
+const goToLastPage = () => {
+  goToPage(totalPages.value);
+};
+
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    goToPage(currentPage.value - 1);
+  }
+};
+
+const goToNextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    goToPage(currentPage.value + 1);
+  }
+};
+
+const canPreviousPage = computed(() => {
+  if (isApiPagination.value) {
+    return props.pagination.has_prev;
+  }
+  return props.table.getCanPreviousPage();
+});
+
+const canNextPage = computed(() => {
+  if (isApiPagination.value) {
+    return props.pagination.has_next;
+  }
+  return props.table.getCanNextPage();
+});
+
+// Check if pagination should be shown (more than 1 page)
+const showPaginationControls = computed(() => {
+  return totalPages.value > 1;
 });
 </script>
 
 <template>
-  <div class="flex items-center justify-end space-x-2 pt-4">
+  <div class="flex items-center justify-between pt-4">
     <div v-if="enableSelection" class="flex-1 text-sm text-muted-foreground">
       {{ table.getFilteredSelectedRowModel().rows.length }} of
-      {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+      {{ totalItems }} row(s) selected.
     </div>
-    <div class="space-x-2">
-      <Button
-        variant="outline"
-        size="sm"
-        :disabled="!table.getCanPreviousPage()"
-        @click="table.previousPage()"
-      >
-        Previous
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        :disabled="!table.getCanNextPage()"
-        @click="table.nextPage()"
-      >
-        Next
-      </Button>
+    <div v-else class="flex-1" />
+
+    <!-- Show pagination only if there's more than 1 page -->
+    <Pagination
+      v-if="showPaginationControls"
+      v-slot="{ page }"
+      :total="totalItems"
+      :items-per-page="itemsPerPage"
+      :sibling-count="1"
+      show-edges
+      :default-page="currentPage"
+      :page="currentPage"
+    >
+      <PaginationList class="flex justify-end items-center gap-1">
+        <PaginationFirst @click="goToFirstPage" :disabled="!canPreviousPage" />
+        <PaginationPrevious
+          @click="goToPreviousPage"
+          :disabled="!canPreviousPage"
+        />
+
+        <template v-for="(item, index) in pageNumbers" :key="index">
+          <PaginationListItem
+            v-if="typeof item === 'number'"
+            :value="item"
+            as-child
+          >
+            <Button
+              class="w-10 h-10 p-0"
+              :variant="item === currentPage ? 'default' : 'outline'"
+              @click="goToPage(item)"
+            >
+              {{ item }}
+            </Button>
+          </PaginationListItem>
+          <PaginationEllipsis
+            v-else
+            :key="`ellipsis-${index}`"
+            :index="index"
+          />
+        </template>
+
+        <PaginationNext @click="goToNextPage" :disabled="!canNextPage" />
+        <PaginationLast @click="goToLastPage" :disabled="!canNextPage" />
+      </PaginationList>
+    </Pagination>
+
+    <!-- Show simple text if only 1 page -->
+    <div v-else class="text-sm text-muted-foreground">
+      {{ totalItems }} row(s) total
     </div>
   </div>
 </template>

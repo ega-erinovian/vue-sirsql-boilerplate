@@ -1,10 +1,10 @@
 <script setup>
 import { cn } from "@/lib/utils";
-import { Label } from '@/components/ui/label';
+import { Label } from "@/components/ui/label";
 
 const props = defineProps({
   class: { type: null, required: false },
-  important: { type: null, required: false}
+  important: { type: null, required: false },
 });
 </script>
 

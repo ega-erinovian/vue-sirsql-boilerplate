@@ -10,7 +10,6 @@ const props = defineProps({
   asChild: { type: Boolean, required: false },
   as: { type: null, required: false, default: "button" },
 });
-
 </script>
 
 <template>

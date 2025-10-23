@@ -1,15 +1,14 @@
 <script setup>
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 defineProps({
   title: { type: String, required: true },
   body: { type: String, required: true },
 });
-
 </script>
 
 <template>
-    <Card>
+  <Card>
     <CardHeader>
       <CardTitle class="font-semibold line-clamp-2">{{ title }}</CardTitle>
     </CardHeader>

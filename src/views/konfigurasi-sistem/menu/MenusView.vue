@@ -62,7 +62,7 @@ const columns = [
             console.log("Edit", row.original.nama_menu);
           },
         },
-        () => h(Pencil, { class: "p-[2px]" })
+        () => h(Pencil, { class: "p-[2px]" }),
       ),
       h(
         ButtonTooltip,
@@ -74,7 +74,7 @@ const columns = [
             console.log("Delete", row.original.nama_menu);
           },
         },
-        () => h(Trash, { class: "p-[2px]" })
+        () => h(Trash, { class: "p-[2px]" }),
       ),
     ];
   }),

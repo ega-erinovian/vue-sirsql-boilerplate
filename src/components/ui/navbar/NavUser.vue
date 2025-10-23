@@ -1,13 +1,7 @@
 <script setup>
-import {
-  LogOut,
-  Settings
-} from "lucide-vue-next";
+import { LogOut, Settings } from "lucide-vue-next";
 
-import {
-  Avatar,
-  AvatarFallback,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,12 +10,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/vue-query";
 import { onBeforeMount, ref } from "vue";
@@ -40,29 +34,28 @@ onBeforeMount(async () => {
   try {
     initialName.value = authStore.user.username[0];
     fullName.value = authStore.user.username;
-    
   } catch (error) {
-    console.error('Failed to load user:', error)
-    router.push({ name: 'Login' })
+    console.error("Failed to load user:", error);
+    router.push({ name: "Login" });
   }
-})
+});
 
 const logoutMutation = useMutation({
   mutationFn: async () => {
-    authStore.logout()
+    authStore.logout();
   },
   onSuccess: () => {
     sidebarStore.clearMenus();
-    router.push({name: 'Login'})
+    router.push({ name: "Login" });
   },
   onError: (err) => {
     console.log(err);
-  }
-})
+  },
+});
 
 const handleLogout = () => {
   logoutMutation.mutate();
-}
+};
 </script>
 
 <template>
@@ -75,7 +68,9 @@ const handleLogout = () => {
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:cursor-pointer"
           >
             <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarFallback class="rounded-lg uppercase"> {{ initialName }} </AvatarFallback>
+              <AvatarFallback class="rounded-lg uppercase">
+                {{ initialName }}
+              </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">{{ fullName }}</span>
@@ -84,13 +79,15 @@ const handleLogout = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           class="min-w-56 rounded-lg me-12"
-          :side="bottom"
+          side="bottom"
           :side-offset="4"
         >
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarFallback class="rounded-lg uppercase"> {{ initialName }} </AvatarFallback>
+                <AvatarFallback class="rounded-lg uppercase">
+                  {{ initialName }}
+                </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ fullName }}</span>
@@ -100,7 +97,7 @@ const handleLogout = () => {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <RouterLink to="/konfigurasi-sistem/user/edit">
-            <DropdownMenuItem>
+              <DropdownMenuItem>
                 <Settings />
                 Settings
               </DropdownMenuItem>

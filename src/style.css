@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Abel&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-*{
+* {
   font-family: "Abel", sans-serif;
   font-style: normal;
 }
@@ -58,12 +58,12 @@
   --color-bs-danger: var(--bs-danger);
   --color-bs-light: var(--bs-light);
   --color-bs-dark: var(--bs-dark);
-  --color-bs-primary-dark: var(--bs-primary);
-  --color-bs-secondary-dark: var(--bs-secondary);
-  --color-bs-success-dark: var(--bs-success);
-  --color-bs-info-dark: var(--bs-info);
-  --color-bs-warning-dark: var(--bs-warning);
-  --color-bs-danger-dark: var(--bs-danger);
+  --color-bs-primary-dark: var(--bs-primary-dark);
+  --color-bs-secondary-dark: var(--bs-secondary-dark);
+  --color-bs-success-dark: var(--bs-success-dark);
+  --color-bs-info-dark: var(--bs-info-dark);
+  --color-bs-warning-dark: var(--bs-warning-dark);
+  --color-bs-danger-dark: var(--bs-danger-dark);
 }
 
 :root {

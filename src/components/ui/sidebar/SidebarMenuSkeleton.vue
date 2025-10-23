@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { cn } from "@/lib/utils";
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const props = defineProps({
   showIcon: { type: Boolean, required: false },

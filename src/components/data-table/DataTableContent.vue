@@ -42,7 +42,31 @@ const props = defineProps({
 const emit = defineEmits(["rowClick"]);
 
 const handleRowClick = (row, event) => {
-  emit("rowClick", row);
+  // Check if the click target is an interactive element or inside one
+  const target = event.target;
+
+  // List of selectors for interactive elements that should not trigger row click
+  const interactiveSelectors = [
+    "button",
+    "a",
+    "input",
+    "select",
+    "textarea",
+    '[role="button"]',
+    '[role="link"]',
+    '[role="menuitem"]',
+    ".prevent-row-click", // Custom class for preventing row click
+  ];
+
+  // Check if the clicked element or any of its parents match the selectors
+  const isInteractive = interactiveSelectors.some((selector) => {
+    return target.closest(selector) !== null;
+  });
+
+  // Only emit rowClick if not clicking on interactive elements
+  if (!isInteractive) {
+    emit("rowClick", row, event);
+  }
 };
 
 const getRowClass = (row) => {
@@ -94,7 +118,7 @@ const getHeaderClass = (header) => {
                 },
                 header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
                 'bg-brand-primary text-white',
-                getHeaderClass(header)
+                getHeaderClass(header),
               )
             "
           >
@@ -111,7 +135,7 @@ const getHeaderClass = (header) => {
           <template v-for="row in table.getRowModel().rows" :key="row.id">
             <TableRow
               :data-state="row.getIsSelected() && 'selected'"
-              @click="handleRowClick(row)"
+              @click="handleRowClick(row, $event)"
               :class="['cursor-pointer', getRowClass(row)]"
             >
               <TableCell
@@ -124,7 +148,7 @@ const getHeaderClass = (header) => {
                       'sticky bg-background/95': cell.column.getIsPinned(),
                     },
                     cell.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                    getCellClass(cell, row)
+                    getCellClass(cell, row),
                   )
                 "
               >

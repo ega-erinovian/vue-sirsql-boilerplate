@@ -2,7 +2,7 @@
 import {
   grupOptions,
   profesiOptions,
-} from "@/components/features/konfigurasi-sistem/user/const";
+} from "@/components/features/konfigurasi-sistem/user/consts";
 import FormInputComponent from "@/components/common/FormInputComponent.vue";
 import Select2 from "@/components/Select2.vue";
 import { Button } from "@/components/ui/button";

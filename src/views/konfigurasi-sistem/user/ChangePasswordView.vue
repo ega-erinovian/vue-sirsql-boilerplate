@@ -26,7 +26,7 @@ const schema = yup.object({
     .required("Password is required")
     .notOneOf(
       [yup.ref("currentPassword")],
-      "New password must be different from current password."
+      "New password must be different from current password.",
     ),
   confirmPassword: yup
     .string()

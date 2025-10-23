@@ -17,7 +17,7 @@ import { menuData } from "@/components/features/konfigurasi-sistem/menu/sample.d
 
 function useDataTable() {
   const columns = useTableColumns();
-  
+
   const sorting = ref([]);
   const columnFilters = ref([]);
   const columnVisibility = ref({});
@@ -39,7 +39,8 @@ function useDataTable() {
       valueUpdater(updaterOrValue, columnVisibility),
     onRowSelectionChange: (updaterOrValue) =>
       valueUpdater(updaterOrValue, rowSelection),
-    onExpandedChange: (updaterOrValue) => valueUpdater(updaterOrValue, expanded),
+    onExpandedChange: (updaterOrValue) =>
+      valueUpdater(updaterOrValue, expanded),
     state: {
       get sorting() {
         return sorting.value;

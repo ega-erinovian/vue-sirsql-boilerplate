@@ -4,7 +4,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 import SidebarMenuButtonChild from "./SidebarMenuButtonChild.vue";
 import { useSidebar } from "./utils";
 
@@ -37,7 +37,10 @@ const delegatedProps = reactiveOmit(props, "tooltip");
 
   <Tooltip v-else>
     <TooltipTrigger as-child>
-      <SidebarMenuButtonChild v-bind="{ ...delegatedProps, ...$attrs }" class="rounded-sm text-md">
+      <SidebarMenuButtonChild
+        v-bind="{ ...delegatedProps, ...$attrs }"
+        class="rounded-sm text-md"
+      >
         <slot />
       </SidebarMenuButtonChild>
     </TooltipTrigger>

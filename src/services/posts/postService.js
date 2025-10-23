@@ -1,4 +1,4 @@
-import apiClient from '@/api/sampleClient'
+import apiClient from "@/api/sampleClient";
 
 /**
  * Posts API service functions
@@ -9,8 +9,8 @@ export const postsService = {
    * @returns {Promise<Array>} Array of posts
    */
   async getPosts() {
-    const response = await apiClient.get('/posts')
-    return response.data
+    const response = await apiClient.get("/posts");
+    return response.data;
   },
 
   /**
@@ -19,9 +19,8 @@ export const postsService = {
    * @returns {Promise<Object>} Post object
    */
   async getPost(id) {
-    
-    const response = await apiClient.get(`/posts/${id}`)
-    return response.data
+    const response = await apiClient.get(`/posts/${id}`);
+    return response.data;
   },
 
   /**
@@ -30,8 +29,8 @@ export const postsService = {
    * @returns {Promise<Array>} Array of posts by user
    */
   async getPostsByUser(userId) {
-    const response = await apiClient.get(`/posts?userId=${userId}`)
-    return response.data
+    const response = await apiClient.get(`/posts?userId=${userId}`);
+    return response.data;
   },
 
   /**
@@ -40,8 +39,8 @@ export const postsService = {
    * @returns {Promise<Object>} Created post
    */
   async createPost(postData) {
-    const response = await apiClient.post('/posts', postData)
-    return response.data
+    const response = await apiClient.post("/posts", postData);
+    return response.data;
   },
 
   /**
@@ -51,8 +50,8 @@ export const postsService = {
    * @returns {Promise<Object>} Updated post
    */
   async updatePost(id, postData) {
-    const response = await apiClient.put(`/posts/${id}`, postData)
-    return response.data
+    const response = await apiClient.put(`/posts/${id}`, postData);
+    return response.data;
   },
 
   /**
@@ -61,6 +60,6 @@ export const postsService = {
    * @returns {Promise<void>}
    */
   async deletePost(id) {
-    await apiClient.delete(`/posts/${id}`)
-  }
-}
+    await apiClient.delete(`/posts/${id}`);
+  },
+};

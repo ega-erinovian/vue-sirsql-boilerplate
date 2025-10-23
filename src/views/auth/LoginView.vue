@@ -50,7 +50,7 @@ const authSubmitHandle = () => {
           <form class="flex flex-col gap-6" @submit.prevent="authSubmitHandle">
             <div class="flex flex-col items-center gap-4 text-center">
               <div class="w-16 h-16">
-                <img src="/logo-ql.png" alt="logo-rsql" />
+                <img src="/assets/logo-ql.png" alt="logo-rsql" />
               </div>
             </div>
 
@@ -107,7 +107,7 @@ const authSubmitHandle = () => {
     </div>
     <div class="relative hidden bg-muted lg:block">
       <img
-        src="/login-poster/quin-latifa-rs.webp"
+        src="/assets/login-poster/quin-latifa-rs.webp"
         alt="Image"
         class="absolute inset-0 h-full w-full object-cover object-top dark:brightness-[0.2] dark:grayscale"
       />

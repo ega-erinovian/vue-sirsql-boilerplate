@@ -27,9 +27,7 @@ const handleRefreshBtn = () => {
         <FileX />
       </EmptyMedia>
       <EmptyTitle class="font-bold">Data Not Found</EmptyTitle>
-      <EmptyDescription>
-        Try to refresh in a moment.
-      </EmptyDescription>
+      <EmptyDescription> Try to refresh in a moment. </EmptyDescription>
     </EmptyHeader>
     <EmptyContent>
       <Button size="sm" @click="handleRefreshBtn" class="cursor-pointer">
