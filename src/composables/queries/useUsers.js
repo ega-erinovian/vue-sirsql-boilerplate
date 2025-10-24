@@ -13,7 +13,7 @@ export const usersKeys = {
 /**
  * Hook to get all users
  * @param {Object} params - Query parameters (page, limit, offset, sort)
- * @param {Object} options - React Query options
+ * @param {Object} options - Vue Query options
  */
 export function useAllUsers(params = {}, options = {}) {
   return useQuery({

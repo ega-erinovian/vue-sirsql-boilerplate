@@ -83,7 +83,7 @@ const onSubmit = handleSubmit((values) => {
         ><Plus />Add</Button
       >
     </DialogTrigger>
-    <DialogContent class="sm:max-w-xl" aria-describedby="undefined">
+    <DialogContent class="sm:max-w-xl">
       <DialogHeader>
         <DialogTitle>Tambah Menu</DialogTitle>
         <AlertComponent

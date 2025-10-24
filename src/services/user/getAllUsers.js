@@ -1,7 +1,7 @@
 import apiClient from "@/api/client";
 
 /**
- * Get all users
+ * Fetch all users
  * @returns {Promise<Array>} Array of users
  */
 async function getAllUsers(params = {}) {

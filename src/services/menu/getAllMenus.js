@@ -1,8 +1,8 @@
 import apiClient from "@/api/client";
 
 /**
- * Get all sidebar menus
- * @returns {Promise<Array>} Array of menus
+ * Fetches all menus.
+ * @returns {Promise<Array>} A promise that resolves to an array of menus.
  */
 async function getAllMenus() {
   const response = await apiClient.get(`/menu`);

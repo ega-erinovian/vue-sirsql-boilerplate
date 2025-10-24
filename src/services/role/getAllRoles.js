@@ -1,7 +1,7 @@
 import apiClient from "@/api/client";
 
 /**
- * Get all sidebar menus
+ * Fetch all roles
  * @returns {Promise<Array>} Array of menus
  */
 async function getAllRoles() {

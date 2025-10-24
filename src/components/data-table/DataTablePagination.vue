@@ -1,8 +1,9 @@
 /* * Data Table Pagination with Numbered Pages */
 
 <script setup>
-import { computed } from "vue";
 import { Button } from "@/components/ui/button";
+import { PaginationList, PaginationListItem } from "reka-ui";
+import { computed } from "vue";
 import {
   Pagination,
   PaginationEllipsis,
@@ -11,7 +12,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
-import { PaginationList, PaginationListItem } from "reka-ui";
 
 const props = defineProps({
   table: {
@@ -171,7 +171,6 @@ const showPaginationControls = computed(() => {
     <!-- Show pagination only if there's more than 1 page -->
     <Pagination
       v-if="showPaginationControls"
-      v-slot="{ page }"
       :total="totalItems"
       :items-per-page="itemsPerPage"
       :sibling-count="1"

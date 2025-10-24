@@ -14,8 +14,9 @@ export const menusKeys = {
 };
 
 /**
- * Hook to get all posts by user id
+ * Hook to fetch all menus.
  * @param {Object} options - Query options
+ * @returns {Object} Query result
  */
 export function useAllMenus(options = {}) {
   return useQuery({
@@ -29,8 +30,10 @@ export function useAllMenus(options = {}) {
 }
 
 /**
- * Hook to get all posts by user id
+ * Hook to fetch menus for a specific user by user ID.
+ * @param {string} userId - User's ID
  * @param {Object} options - Query options
+ * @returns {Object} Query result
  */
 export function useMenusByUserId(userId, options = {}) {
   return useQuery({
@@ -47,15 +50,16 @@ export function useMenusByUserId(userId, options = {}) {
   });
 }
 
-/*
- * Inserts a menu item and refreshes the menu list on success.
+/**
+ * Hook to insert a new menu item and refresh menu list on success.
+ * @returns {Object} Mutation result
  */
 export function useInsertMenu() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: insertMenu,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate and refetch menu queries after successful insertion
       toast.success("Menu added successfully.");
       queryClient.invalidateQueries({ queryKey: ["menus"] });

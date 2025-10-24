@@ -10,13 +10,12 @@ function useGenerateSlug() {
 
     return str
       .toString()
-      .toLowerCase() // Convert to lowercase
-      .trim() // Remove whitespace from ends
+      .toLowerCase()
+      .trim()
       .replace(/[\s\W-]+/g, "-") // Replace spaces/special chars with hyphens
       .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
   };
 
-  // Computed property for reactive slug generation
   const slug = computed(() => generateSlug(input.value));
 
   return {

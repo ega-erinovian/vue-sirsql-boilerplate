@@ -3,11 +3,12 @@ import EmptyResult from "@/components/common/EmptyResult.vue";
 import PageTitle from "@/components/common/PageTitle.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
 import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
-import { allUserResponse } from "@/components/features/konfigurasi-sistem/user/consts";
 import UserTableAction from "@/components/features/konfigurasi-sistem/user/UserTableAction.vue";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAllUsers } from "@/composables/queries/useUsers";
 // import { Skeleton } from "@/components/ui/skeleton";
+import DateRangeComponent from "@/components/common/DateRangeComponent.vue";
+import { usePhpDate } from "@/composables/helper/usePhpDate";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import {
@@ -15,12 +16,19 @@ import {
   createSelectionColumn,
   createSortableColumn,
 } from "@/lib/tableColumnHelpers";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { createColumnHelper } from "@tanstack/vue-table";
-import { computed, h, ref } from "vue";
+import { computed, h, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const { phpDate } = usePhpDate();
 
+// Table Filter
+const startDate = ref(null);
+const endDate = ref(null);
+
+// User API Params
 const currentPage = ref(1);
 const limit = ref(15);
 const sort = ref("desc");
@@ -34,9 +42,6 @@ const { data: users, isLoading } = useAllUsers(
     staleTime: 5 * 60 * 1000,
   },
 );
-
-// Dummy data
-const allUserData = allUserResponse;
 
 // Define columns
 const columnHelper = createColumnHelper();
@@ -74,7 +79,7 @@ const handlePageChange = (page) => {
 };
 
 // Cell color based on column
-const getCellColor = (columnId, row, index) => {
+const getCellColor = (columnId, row) => {
   if (columnId === "nama_menu" && !row.id_parent) {
     return "font-bold text-gray-900"; // Parent menu bold
   }
@@ -87,12 +92,52 @@ const getCellColor = (columnId, row, index) => {
 const handleRefreshPage = () => {
   router.go();
 };
+
+const start = today(getLocalTimeZone()).set({ day: 1 });
+const end = today(getLocalTimeZone());
+
+const datePickerValue = ref({
+  start,
+  end,
+});
+
+const updateDates = () => {
+  if (datePickerValue.value.start && datePickerValue.value.end) {
+    const startParsed = {
+      day: datePickerValue.value.start.day,
+      month: datePickerValue.value.start.month,
+      year: datePickerValue.value.start.year,
+    };
+    
+    const endParsed = {
+      day: datePickerValue.value.end.day,
+      month: datePickerValue.value.end.month,
+      year: datePickerValue.value.end.year,
+    };
+
+    startDate.value = phpDate(startParsed);
+    endDate.value = phpDate(endParsed);
+    
+    console.log(startDate.value, endDate.value);
+  }
+};
+
+updateDates();
+
+watch(datePickerValue, updateDates, { deep: true });
 </script>
 
 <template>
   <DashboardLayout>
     <div class="w-full mx-auto grid gap-4">
       <PageTitle title="Konfigurasi User" />
+      <DataTableFilter>
+        <DateRangeComponent 
+          v-model="datePickerValue"
+          :start-date-display="startDate"
+          :end-date-display="endDate"
+        />
+      </DataTableFilter>
       <CardLayout>
         <div v-if="isLoading" class="grid gap-4">
           <Skeleton class="h-10" />

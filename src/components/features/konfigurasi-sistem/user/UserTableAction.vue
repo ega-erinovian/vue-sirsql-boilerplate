@@ -9,24 +9,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Lock, Menu, Pencil, Settings2, Trash, User } from "lucide-vue-next";
+import { Ellipsis } from "lucide-vue-next";
 import EditUserRoleModal from "./EditUserRoleModal.vue";
 
-const props = defineProps({
+defineProps({
   userId: { type: String, required: true },
 });
-
-function handleEditUser() {
-  console.log(props.userId);
-}
 </script>
 
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button class="cursor-pointer"> <Settings2 /> </Button>
+      <Button variant="secondary" class="cursor-pointer w-6 h-6"> <Ellipsis /> </Button>
     </DropdownMenuTrigger>
-    <DropdownMenuContent class="w-56">
+    <DropdownMenuContent class="w-56" align="end">
       <DropdownMenuLabel class="font-bold">User Settings</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>

@@ -33,7 +33,7 @@ const konfigurasiSistemRoutes = [
   },
   // Roles
   {
-    path: "/konfigurasi-sistem/roles",
+    path: "/konfigurasi-sistem/role",
     name: "Roles",
     component: RolesView,
     meta: { requiresAuth: true },

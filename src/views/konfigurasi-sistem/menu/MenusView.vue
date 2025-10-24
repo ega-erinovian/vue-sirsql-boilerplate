@@ -1,7 +1,7 @@
 /* * Example: How to use the reusable DataTable component */
 
 <script setup>
-import ButtonTooltip from "@/components/common/ButtonTooltipComponent.vue";
+import ButtonTooltip from "@/components/common/ButtonTooltipDialogComponent.vue";
 import EmptyResult from "@/components/common/EmptyResult.vue";
 import PageTitle from "@/components/common/PageTitle.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
@@ -52,30 +52,30 @@ const columns = [
 
   createActionsColumn(columnHelper, (row) => {
     return [
-      h(
-        ButtonTooltip,
-        {
-          tooltip: "Edit",
-          color: "warning",
-          onBtnClick: () => {
-            event?.stopPropagation(); // prevent row click
-            console.log("Edit", row.original.nama_menu);
-          },
-        },
-        () => h(Pencil, { class: "p-[2px]" }),
-      ),
-      h(
-        ButtonTooltip,
-        {
-          tooltip: "Hapus",
-          color: "danger",
-          onBtnClick: () => {
-            event?.stopPropagation(); // prevent row click
-            console.log("Delete", row.original.nama_menu);
-          },
-        },
-        () => h(Trash, { class: "p-[2px]" }),
-      ),
+      // h(
+      //   ButtonTooltip,
+      //   {
+      //     tooltip: "Edit",
+      //     color: "warning",
+      //     onBtnClick: () => {
+      //       event?.stopPropagation(); // prevent row click
+      //       console.log("Edit", row.original.nama_menu);
+      //     },
+      //   },
+      //   () => h(Pencil, { class: "p-[2px]" }),
+      // ),
+      // h(
+      //   ButtonTooltip,
+      //   {
+      //     tooltip: "Hapus",
+      //     color: "danger",
+      //     onBtnClick: () => {
+      //       event?.stopPropagation(); // prevent row click
+      //       console.log("Delete", row.original.nama_menu);
+      //     },
+      //   },
+      //   () => h(Trash, { class: "p-[2px]" }),
+      // ),
     ];
   }),
 ];

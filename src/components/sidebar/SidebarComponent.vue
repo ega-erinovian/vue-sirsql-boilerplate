@@ -63,7 +63,7 @@ onMounted(() => {
       <SidebarLogo />
     </SidebarHeader>
     <SidebarContent>
-      <SidebarMenus :items="sidebarStore.menus" :currentPath="extractedUrl" />
+      <div><SidebarMenus :items="sidebarStore.menus" :currentPath="extractedUrl" /></div>
     </SidebarContent>
     <SidebarRail />
   </Sidebar>

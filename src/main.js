@@ -23,7 +23,7 @@ const queryClient = new QueryClient({
       refetchOnReconnect: true, // Refetch on reconnect
     },
     mutations: {
-      retry: 1, // Retry failed mutations once
+      retry: 0, // Retry failed mutations once
     },
   },
 });

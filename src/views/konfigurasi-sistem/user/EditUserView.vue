@@ -1,12 +1,11 @@
 <script setup>
+import FormInputComponent from "@/components/common/FormInputComponent.vue";
 import {
   grupOptions,
   profesiOptions,
 } from "@/components/features/konfigurasi-sistem/user/consts";
-import FormInputComponent from "@/components/common/FormInputComponent.vue";
-import Select2 from "@/components/Select2.vue";
+import Select2 from "@/components/SelectTwo.vue";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldError,
@@ -15,14 +14,12 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useGetSelectedValue } from "@/composables/helper/useGetSelectedValue";
-import { useJwtDecoder } from "@/composables/helper/useJwtDecoder";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import { useAuthStore } from "@/store/auth";
 import { useMutation } from "@tanstack/vue-query";
 import { useForm } from "vee-validate";
-import { computed, readonly, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 
@@ -62,7 +59,7 @@ const grup = ref(8);
 const username = ref(user.username || "");
 
 // Vee-Validate setup
-const { errors, handleSubmit, defineField, values } = useForm({
+const { errors, handleSubmit, defineField } = useForm({
   initialValues: {
     nip: nip.value,
     sip: sip.value,
@@ -124,12 +121,7 @@ const onSubmit = handleSubmit((values) => {
 });
 
 const cancelButtonHandler = async () => {
-  if (isFirstLogin) {
-    await authStore.logout();
-    router.push({ name: "Login" });
-  } else {
-    router.push({ name: "Beranda" });
-  }
+  router.push({ name: "Beranda" });
 };
 
 // const getSelected = useGetSelectedValue();
@@ -150,15 +142,12 @@ const handleSearch = (query) => {
       <div class="w-full max-w-lg">
         <CardLayout>
           <div class="flex flex-col gap-4">
-            <div class="text-center text-sm" v-if="isFirstLogin">
-              This is happen only on your first login, don't worry.
-            </div>
             <form @submit="onSubmit">
               <FieldSet>
                 <FieldGroup>
                   <FormInputComponent
-                    v-model="nipField"
                     id="nip"
+                    v-model="nipField"
                     label="NIP"
                     type="text"
                     placeholder="1234xxxxxxxx"
@@ -166,8 +155,8 @@ const handleSearch = (query) => {
                     :error="errors.nip"
                   />
                   <FormInputComponent
-                    v-model="sipField"
                     id="sip"
+                    v-model="sipField"
                     label="SIP"
                     type="text"
                     placeholder="1234xxxxxxxx"
@@ -175,8 +164,8 @@ const handleSearch = (query) => {
                     :error="errors.sip"
                   />
                   <FormInputComponent
-                    v-model="kodeDpjpBpjsField"
                     id="kodeDpjpBpjs"
+                    v-model="kodeDpjpBpjsField"
                     label="Kode DPJP BPJS"
                     type="text"
                     placeholder="1234xxxxxxxx"
@@ -185,8 +174,8 @@ const handleSearch = (query) => {
                     :error="errors.kodeDpjpBpjs"
                   />
                   <FormInputComponent
+                  id="pegawai"
                     v-model="pegawaiField"
-                    id="pegawai"
                     label="Pegawai"
                     type="text"
                     placeholder="john doe"
@@ -216,14 +205,14 @@ const handleSearch = (query) => {
                     <FieldLabel> Titel </FieldLabel>
                     <div class="grid grid-cols-2 gap-4">
                       <Input
+                      id="titleDepan"
                         v-model="titleDepan"
-                        id="titleDepan"
                         type="text"
                         placeholder="dr."
                       />
                       <Input
+                      id="titleBelakang"
                         v-model="titleBelakang"
-                        id="titleBelakang"
                         type="text"
                         placeholder="S.P.kj"
                       />

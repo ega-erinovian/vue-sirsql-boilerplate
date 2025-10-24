@@ -1,7 +1,3 @@
-/*
- *  Main table logic composable
- */
-
 import { ref } from "vue";
 import {
   getCoreRowModel,

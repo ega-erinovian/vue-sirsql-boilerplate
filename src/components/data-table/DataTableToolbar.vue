@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
-const props = defineProps({
+defineProps({
   table: {
     type: Object,
     required: true,

@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ChevronRight, Dot, Home } from "lucide-vue-next";
+import { ChevronRight, Home } from "lucide-vue-next";
 import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 

@@ -1,7 +1,7 @@
 import { authApiClient } from "@/api/authClient";
 
 /**
- * Posts API service functions
+ * Auth API service functions
  */
 export const authService = {
   async login(payload) {

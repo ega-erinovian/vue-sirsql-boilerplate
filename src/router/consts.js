@@ -3,5 +3,5 @@ export const allowedRoutes = [
   "/change-password",
   "/konfigurasi-sistem/user/edit",
   "/konfigurasi-sistem/menu",
-  "/konfigurasi-sistem/roles",
+  "/konfigurasi-sistem/role",
 ];

@@ -58,7 +58,7 @@ const isFirstLogin = !authStore.isFirstLogin;
 <template>
   <LoadingScreen v-if="isLoading" />
 
-  <SidebarProvider v-else-if="!isFirstLogin">
+  <SidebarProvider v-else-if="isFirstLogin">
     <SidebarComponent :menus="sidebarMenu || []" />
     <SidebarInset class="bg-brand-primary">
       <NavbarComponent :user="user" />

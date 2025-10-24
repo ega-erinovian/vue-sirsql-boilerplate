@@ -2,9 +2,7 @@
 import AlertComponent from "@/components/common/AlertComponent.vue";
 import FormInputComponent from "@/components/common/FormInputComponent.vue";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { FieldGroup, FieldSet } from "@/components/ui/field";
-import { useJwtDecoder } from "@/composables/helper/useJwtDecoder";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import { useAuthStore } from "@/store/auth";
@@ -16,7 +14,7 @@ import * as yup from "yup";
 const authStore = useAuthStore();
 const isFirstLogin = authStore.isFirstLogin;
 const router = useRouter();
-const { decodedToken, error, isLoading, decodeToken } = useJwtDecoder();
+// const { decodedToken, error, isLoading, decodeToken } = useJwtDecoder();
 
 // Validation schema
 const schema = yup.object({

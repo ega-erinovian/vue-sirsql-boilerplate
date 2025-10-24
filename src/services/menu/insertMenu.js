@@ -1,8 +1,9 @@
 import apiClient from "@/api/client";
 
 /**
- * Get all sidebar menus
- * @returns {Promise<Array>} Array of menus
+ * Inserts a new menu into the database.
+ * @param {Object} data - The menu data to be inserted.
+ * @returns {Promise<Array>} A promise that resolves to the inserted menu data.
  */
 async function insertMenu(data) {
   const response = await apiClient.post(`/menu`, data);
