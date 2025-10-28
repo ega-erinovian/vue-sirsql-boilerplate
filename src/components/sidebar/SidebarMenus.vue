@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ChevronRight, Home } from "lucide-vue-next";
+import { watch } from "vue";
 import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -22,7 +23,7 @@ const props = defineProps({
 // Constants
 const HOVER_DELAY = 150;
 const ITEM_ACTIVE_CLASS = "bg-stone-200";
-const SUB_ITEM_ACTIVE_CLASS = "border-l-8 border-brand-primary font-semibold";
+const SUB_ITEM_ACTIVE_CLASS = "bg-stone-200";
 
 // State
 const openMenus = ref({});
@@ -95,16 +96,44 @@ const sortItemsRecursively = (items) => {
   }));
 };
 
-const setActiveMenuClass = (item, subItem, nestedSubItem = null) => {
-  const target = nestedSubItem || subItem;
-
-  if (target.path === props.currentPath) {
-    item.activeMenuClass = ITEM_ACTIVE_CLASS;
-    target.activeMenuClass = SUB_ITEM_ACTIVE_CLASS;
-  } else {
-    item.activeMenuClass = "";
-    target.activeMenuClass = "";
+// Fungsi untuk mengecek apakah item atau child-nya active
+const isItemActive = (item) => {
+  if (!item) return false;
+  
+  // Cek item utama
+  if (item.path === props.currentPath) return true;
+  
+  // Cek children langsung
+  if (item.children?.length) {
+    for (const child of item.children) {
+      if (child.path === props.currentPath) return true;
+      
+      // Cek nested children
+      if (child.children?.length) {
+        for (const nestedChild of child.children) {
+          if (nestedChild.path === props.currentPath) return true;
+        }
+      }
+    }
   }
+  
+  return false;
+};
+
+const isSubItemActive = (subItem) => {
+  if (!subItem) return false;
+  
+  // Cek sub item langsung
+  if (subItem.path === props.currentPath) return true;
+  
+  // Cek nested children dari sub item
+  if (subItem.children?.length) {
+    for (const nestedChild of subItem.children) {
+      if (nestedChild.path === props.currentPath) return true;
+    }
+  }
+  
+  return false;
 };
 
 const loadIcons = async (items) => {
@@ -121,30 +150,18 @@ const loadIcons = async (items) => {
   return imports;
 };
 
-const processMenuItems = (items) => {
-  for (const item of items) {
-    if (!item.children?.length) continue;
-
-    for (const subItem of item.children) {
-      setActiveMenuClass(item, subItem);
-
-      if (subItem.children?.length) {
-        for (const nestedSubItem of subItem.children) {
-          setActiveMenuClass(item, subItem, nestedSubItem);
-        }
-      }
-    }
-  }
-};
-
 // Computed
 const sortedItems = computed(() => sortItemsRecursively(props.items));
+
+// Watch untuk currentPath - update active state ketika URL berubah
+watch(() => props.currentPath, () => {
+  console.log('Current path changed:', props.currentPath);
+});
 
 // Lifecycle
 onMounted(async () => {
   if (props.items?.length) {
     iconComponents.value = await loadIcons(props.items);
-    processMenuItems(props.items);
   }
 });
 </script>
@@ -157,7 +174,7 @@ onMounted(async () => {
         <RouterLink to="/" class="cursor-pointer">
           <SidebarMenuButton
             tooltip="Beranda"
-            class="cursor-pointer"
+            class="cursor-pointer py-6"
             :class="currentPath == '/' ? ITEM_ACTIVE_CLASS : ''"
           >
             <Home />
@@ -174,7 +191,11 @@ onMounted(async () => {
           :to="item.path"
           class="cursor-pointer"
         >
-          <SidebarMenuButton :tooltip="item.nama_menu" class="cursor-pointer">
+          <SidebarMenuButton 
+            :tooltip="item.nama_menu" 
+            class="cursor-pointer py-6"
+            :class="item.path === currentPath ? ITEM_ACTIVE_CLASS : ''"
+          >
             <component
               v-if="iconComponents[item.icon]"
               :is="iconComponents[item.icon]"
@@ -191,8 +212,8 @@ onMounted(async () => {
             @mouseleave="handleMouseLeave(item.id)"
           >
             <SidebarMenuButton
-              class="cursor-pointer text-md"
-              :class="item.activeMenuClass"
+              class="cursor-pointer text-lg py-6"
+              :class="isItemActive(item) ? ITEM_ACTIVE_CLASS : ''"
             >
               <component
                 v-if="iconComponents[item.icon]"
@@ -237,6 +258,7 @@ onMounted(async () => {
                     >
                       <div
                         class="px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 flex items-center justify-between rounded-md m-1"
+                        :class="isSubItemActive(subItem) ? SUB_ITEM_ACTIVE_CLASS : ''"
                       >
                         <span>{{ subItem.nama_menu }}</span>
                         <ChevronRight class="w-4 h-4" />
@@ -256,6 +278,7 @@ onMounted(async () => {
                         :key="nestedItem.id"
                         :to="nestedItem.path"
                         class="flex items-center gap-1 px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 rounded"
+                        :class="nestedItem.path === currentPath ? SUB_ITEM_ACTIVE_CLASS : ''"
                       >
                         {{ nestedItem.nama_menu }}
                       </RouterLink>
@@ -268,7 +291,7 @@ onMounted(async () => {
                   v-else
                   :to="subItem.path"
                   class="block px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 m-1 rounded group"
-                  :class="subItem.activeMenuClass"
+                  :class="subItem.path === currentPath ? SUB_ITEM_ACTIVE_CLASS : ''"
                 >
                   <span class="group-hover:font-bold">{{
                     subItem.nama_menu

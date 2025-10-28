@@ -11,7 +11,7 @@ defineProps({
     data-slot="empty-header"
     :class="
       cn(
-        'flex max-w-sm flex-col items-center gap-2 text-center',
+        'flex flex-col items-center gap-2 text-center',
         $attrs.class ?? '',
       )
     "

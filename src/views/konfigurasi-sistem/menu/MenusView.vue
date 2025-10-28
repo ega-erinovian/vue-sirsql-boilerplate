@@ -1,7 +1,6 @@
 /* * Example: How to use the reusable DataTable component */
 
 <script setup>
-import ButtonTooltip from "@/components/common/ButtonTooltipDialogComponent.vue";
 import EmptyResult from "@/components/common/EmptyResult.vue";
 import PageTitle from "@/components/common/PageTitle.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
@@ -11,14 +10,11 @@ import { useAllMenus } from "@/composables/queries/useMenus";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import {
-  createActionsColumn,
   createBadgeColumn,
   createSelectionColumn,
-  createSortableColumn,
+  createSortableColumn
 } from "@/lib/tableColumnHelpers";
 import { createColumnHelper } from "@tanstack/vue-table";
-import { Pencil, Trash } from "lucide-vue-next";
-import { h } from "vue";
 import { useRouter } from "vue-router";
 
 const { data: menus, isLoading } = useAllMenus({
@@ -50,34 +46,34 @@ const columns = [
     0: { class: "bg-red-100 text-red-800", label: "Inactive" },
   }),
 
-  createActionsColumn(columnHelper, (row) => {
-    return [
-      // h(
-      //   ButtonTooltip,
-      //   {
-      //     tooltip: "Edit",
-      //     color: "warning",
-      //     onBtnClick: () => {
-      //       event?.stopPropagation(); // prevent row click
-      //       console.log("Edit", row.original.nama_menu);
-      //     },
-      //   },
-      //   () => h(Pencil, { class: "p-[2px]" }),
-      // ),
-      // h(
-      //   ButtonTooltip,
-      //   {
-      //     tooltip: "Hapus",
-      //     color: "danger",
-      //     onBtnClick: () => {
-      //       event?.stopPropagation(); // prevent row click
-      //       console.log("Delete", row.original.nama_menu);
-      //     },
-      //   },
-      //   () => h(Trash, { class: "p-[2px]" }),
-      // ),
-    ];
-  }),
+  // createActionsColumn(columnHelper, (row) => {
+  //   return [
+  //     // h(
+  //     //   ButtonTooltip,
+  //     //   {
+  //     //     tooltip: "Edit",
+  //     //     color: "warning",
+  //     //     onBtnClick: () => {
+  //     //       event?.stopPropagation(); // prevent row click
+  //     //       console.log("Edit", row.original.nama_menu);
+  //     //     },
+  //     //   },
+  //     //   () => h(Pencil, { class: "p-[2px]" }),
+  //     // ),
+  //     // h(
+  //     //   ButtonTooltip,
+  //     //   {
+  //     //     tooltip: "Hapus",
+  //     //     color: "danger",
+  //     //     onBtnClick: () => {
+  //     //       event?.stopPropagation(); // prevent row click
+  //     //       console.log("Delete", row.original.nama_menu);
+  //     //     },
+  //     //   },
+  //     //   () => h(Trash, { class: "p-[2px]" }),
+  //     // ),
+  //   ];
+  // }),
 ];
 
 // Event handlers
@@ -97,7 +93,7 @@ const handleSelectionChange = (selection) => {
 // };
 
 // Cell color based on column
-const getCellColor = (columnId, row, index) => {
+const getCellColor = (columnId, row) => {
   if (columnId === "nama_menu" && !row.id_parent) {
     return "font-bold text-gray-900"; // Parent menu bold
   }

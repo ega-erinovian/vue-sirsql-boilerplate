@@ -68,7 +68,7 @@ const isFirstLogin = !authStore.isFirstLogin;
         <Spinner />
         <p class="text-muted-foreground">Loading...</p>
       </div>
-      <div v-else class="p-4">
+      <div v-else class="p-4 h-full">
         <slot />
       </div>
     </SidebarInset>

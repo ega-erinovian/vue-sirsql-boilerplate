@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
@@ -15,4 +16,5 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5173,
   },
+  
 });

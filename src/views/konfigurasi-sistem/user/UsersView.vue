@@ -5,21 +5,23 @@ import DataTable from "@/components/data-table/DataTable.vue";
 import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
 import UserTableAction from "@/components/features/konfigurasi-sistem/user/UserTableAction.vue";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAllUsers } from "@/composables/queries/useUsers";
+import { useAllUsers, useExportUsers } from "@/composables/queries/useUsers";
 // import { Skeleton } from "@/components/ui/skeleton";
 import DateRangeComponent from "@/components/common/DateRangeComponent.vue";
+import { Button } from "@/components/ui/button";
 import { usePhpDate } from "@/composables/helper/usePhpDate";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
+import DataTableFilter from "@/layouts/DataTableFilter.vue";
 import {
   createActionsColumn,
-  createSelectionColumn,
   createSortableColumn,
 } from "@/lib/tableColumnHelpers";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { createColumnHelper } from "@tanstack/vue-table";
 import { computed, h, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { ExcelExportService } from "@/services/excel-export";
 
 const router = useRouter();
 const { phpDate } = usePhpDate();
@@ -28,15 +30,48 @@ const { phpDate } = usePhpDate();
 const startDate = ref(null);
 const endDate = ref(null);
 
+const start = today(getLocalTimeZone()).set({ day: 1 });
+const end = today(getLocalTimeZone());
+
+const datePickerValue = ref({
+  start,
+  end,
+});
+
+const updateDates = () => {
+  if (datePickerValue.value.start && datePickerValue.value.end) {
+    const startParsed = {
+      day: datePickerValue.value.start.day,
+      month: datePickerValue.value.start.month,
+      year: datePickerValue.value.start.year,
+    };
+
+    const endParsed = {
+      day: datePickerValue.value.end.day,
+      month: datePickerValue.value.end.month,
+      year: datePickerValue.value.end.year,
+    };
+
+    startDate.value = phpDate(startParsed);
+    endDate.value = phpDate(endParsed);
+  }
+};
+
+updateDates();
+
+watch(datePickerValue, updateDates, { deep: true });
+
 // User API Params
 const currentPage = ref(1);
-const limit = ref(15);
+const limit = ref(10);
 const sort = ref("desc");
 const { data: users, isLoading } = useAllUsers(
   computed(() => ({
     page: currentPage.value,
     limit: limit.value,
     sort: sort.value,
+    start: startDate.value,
+    end: endDate.value
   })),
   {
     staleTime: 5 * 60 * 1000,
@@ -47,19 +82,11 @@ const { data: users, isLoading } = useAllUsers(
 const columnHelper = createColumnHelper();
 
 const columns = [
-  // Selection column
-  createSelectionColumn(columnHelper),
-
-  createSortableColumn(columnHelper, "id", "ID"),
-
-  // Menu Name column
-  createSortableColumn(columnHelper, "nama_user", "Nama"),
-
-  // Path column
+  createSortableColumn(columnHelper, "nama_user", "Username"),
+  // createSortableColumn(columnHelper, "nama_pegawai", "Nama Lengkap"),
   createSortableColumn(columnHelper, "login_terakhir", "Last Login"),
-
   createActionsColumn(columnHelper, (row) => {
-    return [h(UserTableAction, { userId: row.original.id })];
+    return [h(UserTableAction, { userId: String(row.original.id) })];
   }),
 ];
 
@@ -93,38 +120,35 @@ const handleRefreshPage = () => {
   router.go();
 };
 
-const start = today(getLocalTimeZone()).set({ day: 1 });
-const end = today(getLocalTimeZone());
+const { exportAllUsers, isExporting } = useExportUsers(
+  computed(() => ({
+    start: startDate.value,
+    end: endDate.value
+  }))
+);
 
-const datePickerValue = ref({
-  start,
-  end,
-});
+const exportAllData = async () => {
+  try {
+    const allUsers = await exportAllUsers();
 
-const updateDates = () => {
-  if (datePickerValue.value.start && datePickerValue.value.end) {
-    const startParsed = {
-      day: datePickerValue.value.start.day,
-      month: datePickerValue.value.start.month,
-      year: datePickerValue.value.start.year,
-    };
-    
-    const endParsed = {
-      day: datePickerValue.value.end.day,
-      month: datePickerValue.value.end.month,
-      year: datePickerValue.value.end.year,
-    };
+    if (allUsers?.data?.users?.length > 0) {
+      const exportData = {
+        mode: 'user_report',
+        titel: 'All User',
+        data: {
+          users: allUsers.data.users
+        }
+      };
 
-    startDate.value = phpDate(startParsed);
-    endDate.value = phpDate(endParsed);
-    
-    console.log(startDate.value, endDate.value);
+      await ExcelExportService.downloadExcel(exportData);
+      alert(`✅ Berhasil export ${allUsers.data.length} data users`);
+    } else {
+      alert('❌ Tidak ada data yang bisa diexport');
+    }
+  } catch (error) {
+    alert('❌ Gagal export data', error);
   }
 };
-
-updateDates();
-
-watch(datePickerValue, updateDates, { deep: true });
 </script>
 
 <template>
@@ -132,11 +156,22 @@ watch(datePickerValue, updateDates, { deep: true });
     <div class="w-full mx-auto grid gap-4">
       <PageTitle title="Konfigurasi User" />
       <DataTableFilter>
-        <DateRangeComponent 
+        <DateRangeComponent
           v-model="datePickerValue"
           :start-date-display="startDate"
           :end-date-display="endDate"
         />
+
+        <div class="flex gap-2">
+          <Button
+            @click="exportAllData"
+            variant="outline"
+            class="flex items-center gap-2"
+          >
+            <span v-if="isExporting" class="animate-spin">⏳</span>
+            <span>{{ isExporting ? "Exporting..." : "Export All Users" }}</span>
+          </Button>
+        </div>
       </DataTableFilter>
       <CardLayout>
         <div v-if="isLoading" class="grid gap-4">
@@ -146,9 +181,9 @@ watch(datePickerValue, updateDates, { deep: true });
         <div v-else>
           <DataTable
             v-if="users"
-            :data="users.data"
+            :data="users.data || []"
             :columns="columns"
-            :filter-column="['nama_user']"
+            :filter-column="['username', 'nama_pegawai']"
             filter-placeholder="Search name"
             :show-column-visibility="true"
             :show-pagination="true"

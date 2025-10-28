@@ -4,10 +4,10 @@ import ChangePasswordView from "@/views/konfigurasi-sistem/user/ChangePasswordVi
 import EditUserView from "@/views/konfigurasi-sistem/user/EditUserView.vue";
 import UsersView from "@/views/konfigurasi-sistem/user/UsersView.vue";
 
-const konfigurasiSistemRoutes = [
+const administratorRoutes = [
   // user
   {
-    path: "/konfigurasi-sistem/user",
+    path: "/administrator/user",
     name: "Tabel User",
     component: UsersView,
     meta: { requiresAuth: true },
@@ -19,21 +19,21 @@ const konfigurasiSistemRoutes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/konfigurasi-sistem/user/edit",
+    path: "/administrator/user/edit",
     name: "Edit User",
     component: EditUserView,
     meta: { requiresAuth: true },
   },
   // Menus
   {
-    path: "/konfigurasi-sistem/menu",
+    path: "/administrator/menu",
     name: "Menu",
     component: MenusView,
     meta: { requiresAuth: true },
   },
   // Roles
   {
-    path: "/konfigurasi-sistem/role",
+    path: "/administrator/role",
     name: "Roles",
     component: RolesView,
     meta: { requiresAuth: true },
@@ -41,4 +41,4 @@ const konfigurasiSistemRoutes = [
   // Add more user routes here...
 ];
 
-export default konfigurasiSistemRoutes;
+export default administratorRoutes;

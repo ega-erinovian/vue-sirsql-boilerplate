@@ -7,7 +7,7 @@ import apiClient from "@/api/client";
  */
 async function getMenusByUserId(userId) {
   const result = await apiClient.get(`/menu/user/${userId}`);
-  return result;
+  return result.data;
 }
 
 export default getMenusByUserId;

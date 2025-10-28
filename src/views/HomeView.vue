@@ -8,20 +8,20 @@ import { RouterLink } from "vue-router";
 </script>
 <template>
   <DashboardLayout>
-    <section class="min-h-dvh grid place-items-center">
+    <section class="h-full grid place-items-center">
       <div
-        className="w-full container mx-auto"
+        className="max-w-3xl container mx-auto"
         aria-labelledby="home-hero-title"
       >
         <Card class="mx-28">
           <CardContent>
-            <div className="mx-auto px-4 py-16 md:py-24">
+            <div className="mx-auto px-4 py-16">
               <header className="mb-4">
                 <h1
                   id="home-hero-title"
                   className="text-balance text-3xl font-semibold tracking-tight md:text-4xl"
                 >
-                  Selamat datang, superuser!
+                  Selamat datang
                 </h1>
               </header>
 

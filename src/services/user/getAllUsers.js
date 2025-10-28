@@ -6,8 +6,6 @@ import apiClient from "@/api/client";
  */
 async function getAllUsers(params = {}) {
   const queryString = new URLSearchParams(params).toString();
-  console.log(queryString);
-
   const response = await apiClient.get(
     `/user?${queryString ? `${queryString}` : ""}`,
   );

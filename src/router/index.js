@@ -8,7 +8,9 @@ import HomeView from "@/views/HomeView.vue";
 import { authRoutes } from "./routes/auth";
 import { pelayananRoutes } from "./routes/pelayanan";
 import { asuransiRoutes } from "./routes/asuransi";
-import konfigurasiSistemRoutes from "./routes/konfigurasiSistem";
+import administratorRoutes from "./routes/administrator";
+import PageNotFound from "@/components/common/PageNotFound.vue";
+import PdfExportDemoView from "@/views/PdfExportDemoView.vue";
 
 // Your existing routes
 const routes = [
@@ -20,8 +22,15 @@ const routes = [
   },
   ...authRoutes,
   ...pelayananRoutes,
-  ...konfigurasiSistemRoutes,
+  ...administratorRoutes,
   ...asuransiRoutes,
+  { path: '/:pathMatch(.*)*', component: PageNotFound },
+  {
+    path: "/pdf-export-demo",
+    name: "PDF Export",
+    component: PdfExportDemoView,
+    meta: { requiresAuth: false },
+  },
 ];
 
 const router = createRouter({
@@ -63,6 +72,7 @@ router.beforeEach(async (to, from, next) => {
       try {
         await authStore.refreshToken();
       } catch (error) {
+        console.error(error);
         authStore.logout();
         return next({ name: "Login" });
       }
