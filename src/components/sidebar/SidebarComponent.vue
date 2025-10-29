@@ -33,19 +33,36 @@ onBeforeMount(() => {
     sidebarStore.setMenus(props.menus);
   }
 
+  console.log(props.menus);
+
   // Set allowed path for user - auth guard
-  props.menus.forEach((item) => {
-    if (!authStore.allowedPath.includes(item.path)) {
-      authStore.setAllowedPath(item.path);
-    }
-    if (item.children.length > 0) {
-      item.children.forEach((child) => {
-        if (!authStore.allowedPath.includes(child.path)) {
-          authStore.setAllowedPath(child.path);
-        }
-      });
-    }
-  });
+  if (props.menus.data) {
+    props.menus.data.forEach((item) => {
+      if (!authStore.allowedPath.includes(item.path)) {
+        authStore.setAllowedPath(item.path);
+      }
+      if (item.children.length > 0) {
+        item.children.forEach((child) => {
+          if (!authStore.allowedPath.includes(child.path)) {
+            authStore.setAllowedPath(child.path);
+          }
+        });
+      }
+    });
+  } else {
+    props.menus.forEach((item) => {
+      if (!authStore.allowedPath.includes(item.path)) {
+        authStore.setAllowedPath(item.path);
+      }
+      if (item.children.length > 0) {
+        item.children.forEach((child) => {
+          if (!authStore.allowedPath.includes(child.path)) {
+            authStore.setAllowedPath(child.path);
+          }
+        });
+      }
+    });
+  }
 });
 
 const extractedUrl = ref("");
@@ -63,7 +80,9 @@ onMounted(() => {
       <SidebarLogo />
     </SidebarHeader>
     <SidebarContent>
-      <div><SidebarMenus :items="sidebarStore.menus" :currentPath="extractedUrl" /></div>
+      <div>
+        <SidebarMenus :items="sidebarStore.menus" :currentPath="extractedUrl" />
+      </div>
     </SidebarContent>
     <SidebarRail />
   </Sidebar>

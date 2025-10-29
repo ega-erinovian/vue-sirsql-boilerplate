@@ -2,7 +2,7 @@ import getAllMenus from "@/services/menu/getAllMenus";
 import getMenusByUserId from "@/services/menu/getMenusByUserId";
 import insertMenu from "@/services/menu/insertMenu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
-import { computed, toValue } from "vue";
+import { computed } from "vue";
 import { toast } from "vue3-toastify";
 
 /**
@@ -35,13 +35,11 @@ export function useAllMenus(options = {}) {
  * @param {Object} options - Query options
  * @returns {Object} Query result
  */
-export function useMenusByUserId(userId, options = {}) {
+export function useMenusByUserId(options = {}) {
   return useQuery({
-    queryKey: computed(() => ["menus", "user", toValue(userId)]),
+    queryKey: computed(() => menusKeys.all),
     queryFn: async () => {
-      const userIdVal = toValue(userId);
-
-      const result = await getMenusByUserId(userIdVal);
+      const result = await getMenusByUserId();
 
       // Return the actual data based on what getMenusByUserId returns
       return result.data || [];

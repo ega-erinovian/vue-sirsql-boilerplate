@@ -22,7 +22,7 @@ const queryEnabled = computed(() => {
 });
 
 // Fetch menus
-const { data: sidebarMenu, isLoading } = useMenusByUserId(userId, {
+const { data: sidebarMenu, isLoading } = useMenusByUserId({
   enabled: queryEnabled,
   staleTime: 5 * 60 * 1000,
 });

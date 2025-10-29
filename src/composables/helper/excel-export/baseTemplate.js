@@ -1,11 +1,7 @@
 import { Formatters } from './utils/formatters.js';
 
 export class BaseTemplate {
-  static wrapExcelDocument(content, title, options = {}) {
-    const { author = 'System', company = 'Healthcare System' } = options;
-    console.log(author, company);
-    
-    
+  static wrapExcelDocument(content, title) {
     return `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" 
           xmlns:x="urn:schemas-microsoft-com:office:excel">

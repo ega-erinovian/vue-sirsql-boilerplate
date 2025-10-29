@@ -2,8 +2,9 @@
 
 <script setup>
 import { Button } from "@/components/ui/button";
+import { useTableState } from "@/composables/helper/data-table/useTableState";
 import { PaginationList, PaginationListItem } from "reka-ui";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import {
   Pagination,
   PaginationEllipsis,
@@ -12,6 +13,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "../ui/select";
 
 const props = defineProps({
   table: {
@@ -26,11 +35,25 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  tableStateName: {
+    type: String,
+    required: true
+  }
 });
 
 const emit = defineEmits(["pageChange"]);
 
-// Check if using API pagination or client-side pagination
+const { pagination: paginationStore, updatePagination } = useTableState(props.tableStateName);
+
+const limit = ref(paginationStore.value?.limit || "10");
+
+watch(limit, (newLimit) => {
+  if (newLimit) {
+    updatePagination({ limit: newLimit });
+    goToFirstPage();
+  }
+});
+
 const isApiPagination = computed(() => props.pagination !== null);
 
 // Current page (1-indexed)
@@ -162,16 +185,26 @@ const showPaginationControls = computed(() => {
 
 <template>
   <div class="flex items-center justify-between pt-4">
-    <div v-if="enableSelection" class="flex-1 text-sm text-muted-foreground">
-      {{ table.getFilteredSelectedRowModel().rows.length }} of
-      {{ totalItems }} row(s) selected.
+    <div class="flex gap-2 items-center w-full">
+      Showing
+      <Select v-model="limit">
+        <SelectTrigger>
+          <SelectValue :aria-label="limit">
+            {{ limit }}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="10"> 10 </SelectItem>
+            <SelectItem value="30"> 30 </SelectItem>
+            <SelectItem value="50"> 50 </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select> per Page of {{ pagination?.total_records || totalItems }} Data
     </div>
-    <div v-else class="flex-1" />
-
     <!-- Show pagination only if there's more than 1 page -->
     <Pagination
       v-if="showPaginationControls"
-      :total="totalItems"
       :items-per-page="itemsPerPage"
       :sibling-count="1"
       show-edges
@@ -210,10 +243,5 @@ const showPaginationControls = computed(() => {
         <PaginationLast @click="goToLastPage" :disabled="!canNextPage" />
       </PaginationList>
     </Pagination>
-
-    <!-- Show simple text if only 1 page -->
-    <div v-else class="text-sm text-muted-foreground">
-      {{ totalItems }} row(s) total
-    </div>
   </div>
 </template>

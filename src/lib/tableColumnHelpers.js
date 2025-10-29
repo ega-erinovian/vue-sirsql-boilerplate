@@ -49,6 +49,7 @@ export function createSortableColumn(
         Button,
         {
           variant: "ghost",
+          class: "hover:bg-transparent cursor-pointer hover:font-bold hover:text-white",
           onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
         },
         () => [label, h(ChevronsUpDown, { class: "ml-2 h-4 w-4" })],
@@ -70,13 +71,23 @@ export function createCurrencyColumn(
   columnHelper,
   accessor,
   label = "Amount",
-  currency = "USD",
+  currency = "IDR",
 ) {
   return columnHelper.accessor(accessor, {
-    header: () => h("div", { class: "text-right" }, label),
+    header: ({ column }) => {
+      return h(
+        Button,
+        {
+          variant: "ghost",
+          class: "hover:bg-transparent cursor-pointer hover:font-bold hover:text-white",
+          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+        },
+        () => [label, h(ChevronsUpDown, { class: "ml-2 h-4 w-4" })],
+      );
+    },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue(accessor));
-      const formatted = new Intl.NumberFormat("en-US", {
+      const formatted = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: currency,
       }).format(amount);
@@ -90,15 +101,46 @@ export function createCurrencyColumn(
  */
 export function createDateColumn(columnHelper, accessor, label, options = {}) {
   return columnHelper.accessor(accessor, {
-    header: () => h("div", label),
+    header: ({ column }) => {
+      return h(
+        Button,
+        {
+          variant: "ghost",
+          class: "hover:bg-transparent cursor-pointer hover:font-bold hover:text-white",
+          onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+        },
+        () => [label, h(ChevronsUpDown, { class: "ml-2 h-4 w-4" })],
+      );
+    },
     cell: ({ row }) => {
-      const date = new Date(row.getValue(accessor));
-      const formatted = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        ...options.dateFormat,
-      });
+      const value = row.getValue(accessor);
+      
+      if (!value) return h("div", "-");
+      
+      const date = value instanceof Date ? value : new Date(value);
+      
+      if (isNaN(date.getTime())) return h("div", "Invalid date");
+      
+      const hasTime = typeof value === 'string' && value.includes(':');
+      
+      // Indonesian month names
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+      ];
+      
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      
+      let formatted = `${day} ${month} ${year}`;
+      
+      if (hasTime) {
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        formatted += ` ${hours}:${minutes}`;
+      }
+      
       return h("div", formatted);
     },
     ...options,

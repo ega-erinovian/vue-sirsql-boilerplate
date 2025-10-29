@@ -1,37 +1,45 @@
-/* * Example: How to use the reusable DataTable component */
-
 <script setup>
 import EmptyResult from "@/components/common/EmptyResult.vue";
 import PageTitle from "@/components/common/PageTitle.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
 import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTableState } from "@/composables/helper/data-table/useTableState";
 import { useAllMenus } from "@/composables/queries/useMenus";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import {
   createBadgeColumn,
-  createSelectionColumn,
-  createSortableColumn
+  createSortableColumn,
 } from "@/lib/tableColumnHelpers";
 import { createColumnHelper } from "@tanstack/vue-table";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const { pagination, updatePagination } = useTableState("administrator_menus");
+
+const limit = ref(computed(() => pagination.value?.limit));
+const forceRefetchDummy = ref(0);
 
 const { data: menus, isLoading } = useAllMenus({
   staleTime: 5 * 60 * 1000,
+  queryKey: ["menus", forceRefetchDummy],
 });
 
-const router = useRouter();
+watch(
+  limit,
+  () => {
+    forceRefetchDummy.value++;
+  },
+  { deep: true },
+);
 
 // Define columns
 const columnHelper = createColumnHelper();
 
 const columns = [
-  // Selection column
-  createSelectionColumn(columnHelper),
-
-  createSortableColumn(columnHelper, "menu_order", "Order"),
-
   // Menu Name column
   createSortableColumn(columnHelper, "nama_menu", "Nama Menu"),
 
@@ -45,44 +53,11 @@ const columns = [
     1: { class: "bg-green-100 text-green-800", label: "Active" },
     0: { class: "bg-red-100 text-red-800", label: "Inactive" },
   }),
-
-  // createActionsColumn(columnHelper, (row) => {
-  //   return [
-  //     // h(
-  //     //   ButtonTooltip,
-  //     //   {
-  //     //     tooltip: "Edit",
-  //     //     color: "warning",
-  //     //     onBtnClick: () => {
-  //     //       event?.stopPropagation(); // prevent row click
-  //     //       console.log("Edit", row.original.nama_menu);
-  //     //     },
-  //     //   },
-  //     //   () => h(Pencil, { class: "p-[2px]" }),
-  //     // ),
-  //     // h(
-  //     //   ButtonTooltip,
-  //     //   {
-  //     //     tooltip: "Hapus",
-  //     //     color: "danger",
-  //     //     onBtnClick: () => {
-  //     //       event?.stopPropagation(); // prevent row click
-  //     //       console.log("Delete", row.original.nama_menu);
-  //     //     },
-  //     //   },
-  //     //   () => h(Trash, { class: "p-[2px]" }),
-  //     // ),
-  //   ];
-  // }),
 ];
 
 // Event handlers
 const handleRowClick = (row) => {
   console.log("Row clicked:", row);
-};
-
-const handleSelectionChange = (selection) => {
-  console.log("Selection changed:", selection);
 };
 
 // Row color based on status
@@ -93,6 +68,7 @@ const handleSelectionChange = (selection) => {
 // };
 
 // Cell color based on column
+
 const getCellColor = (columnId, row) => {
   if (columnId === "nama_menu" && !row.id_parent) {
     return "font-bold text-gray-900"; // Parent menu bold
@@ -101,6 +77,10 @@ const getCellColor = (columnId, row) => {
     return "text-blue-600 font-mono text-sm";
   }
   return "";
+};
+
+const handlePageChange = (page) => {
+  updatePagination({ currentPage: page });
 };
 
 const handleRefreshPage = () => {
@@ -121,16 +101,17 @@ const handleRefreshPage = () => {
           <DataTable
             v-if="menus"
             :data="menus.data"
+            tableStateName="administrator_menus"
             :columns="columns"
             :filter-column="['nama_menu', 'icon']"
             filter-placeholder="Search name"
             :show-column-visibility="true"
             :show-pagination="true"
             :enable-selection="true"
-            :page-size="10"
+            :page-size="Number(pagination.limit)"
             :cell-class-name="getCellColor"
             @row-click="handleRowClick"
-            @selection-change="handleSelectionChange"
+            @page-change="handlePageChange"
           >
             <template #empty>
               <div class="text-center">

@@ -1,7 +1,7 @@
-// Routes that bypass certain auth or permission checks.
+// Routes that bypass certain auth or permission checks. Untuk kebutuhan development
 export const allowedRoutes = [
   "/change-password",
-  "/konfigurasi-sistem/user/edit",
-  "/konfigurasi-sistem/menu",
-  "/konfigurasi-sistem/role",
+  "/administrator/user/edit",
+  "/administrator/menu",
+  "/administrator/role",
 ];

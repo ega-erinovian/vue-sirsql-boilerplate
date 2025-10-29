@@ -6,72 +6,174 @@ import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuM
 import UserTableAction from "@/components/features/konfigurasi-sistem/user/UserTableAction.vue";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAllUsers, useExportUsers } from "@/composables/queries/useUsers";
-// import { Skeleton } from "@/components/ui/skeleton";
 import DateRangeComponent from "@/components/common/DateRangeComponent.vue";
 import { Button } from "@/components/ui/button";
-import { usePhpDate } from "@/composables/helper/usePhpDate";
+import { useTableState } from "@/composables/helper/data-table/useTableState";
+import { ExcelExportService } from "@/composables/helper/excel-export";
+import { useDateRange } from "@/composables/helper/useDateRange";
 import CardLayout from "@/layouts/CardLayout.vue";
 import DashboardLayout from "@/layouts/DashboardLayout.vue";
 import DataTableFilter from "@/layouts/DataTableFilter.vue";
 import {
   createActionsColumn,
+  createDateColumn,
   createSortableColumn,
 } from "@/lib/tableColumnHelpers";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { IconFileTypeXls } from "@tabler/icons-vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import { computed, h, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { ExcelExportService } from "@/services/excel-export";
+import { onMounted } from "vue";
 
 const router = useRouter();
-const { phpDate } = usePhpDate();
+const tableStateName = "administrator_users";
+const { filters, pagination, updateFilters, updatePagination } =
+  useTableState(tableStateName);
 
-// Table Filter
-const startDate = ref(null);
-const endDate = ref(null);
+const datePickerValue = ref({ start: null, end: null });
 
-const start = today(getLocalTimeZone()).set({ day: 1 });
-const end = today(getLocalTimeZone());
+// Flag untuk mencegah circular updates
+const isInitializing = ref(true);
+const isUpdatingFromFilter = ref(false);
 
-const datePickerValue = ref({
-  start,
-  end,
-});
+const {
+  parseDateToPhpFormat,
+  getDefaultDateRange,
+  convertFromPhpDate,
+  isValidDateRange,
+} = useDateRange();
 
-const updateDates = () => {
-  if (datePickerValue.value.start && datePickerValue.value.end) {
-    const startParsed = {
-      day: datePickerValue.value.start.day,
-      month: datePickerValue.value.start.month,
-      year: datePickerValue.value.start.year,
-    };
+// Initialize datePickerValue dari filters atau default
+const initializeDatePicker = () => {
+  isInitializing.value = true;
+  isUpdatingFromFilter.value = true;
 
-    const endParsed = {
-      day: datePickerValue.value.end.day,
-      month: datePickerValue.value.end.month,
-      year: datePickerValue.value.end.year,
-    };
+  const { startDate, endDate } = filters.value;
 
-    startDate.value = phpDate(startParsed);
-    endDate.value = phpDate(endParsed);
+  if (startDate && endDate) {
+    // Konversi dari PHP date string ke CalendarDate
+    const startParsed = convertFromPhpDate(startDate);
+    const endParsed = convertFromPhpDate(endDate);
+
+    if (startParsed && endParsed && isValidDateRange(startParsed, endParsed)) {
+      datePickerValue.value = {
+        start: startParsed,
+        end: endParsed,
+      };
+    } else {
+      console.warn('Invalid date range from filters, using default');
+      const defaultRange = getDefaultDateRange();
+      datePickerValue.value = defaultRange;
+      
+      // Update filters dengan default range
+      updateFilters({
+        startDate: parseDateToPhpFormat(defaultRange.start),
+        endDate: parseDateToPhpFormat(defaultRange.end),
+      });
+    }
+  } else {
+    // Jika tidak ada filters, set default
+    const defaultRange = getDefaultDateRange();
+    datePickerValue.value = defaultRange;
+    
+    // Update filters dengan default range
+    updateFilters({
+      startDate: parseDateToPhpFormat(defaultRange.start),
+      endDate: parseDateToPhpFormat(defaultRange.end),
+    });
+  }
+
+  // Reset flags setelah initialization
+  setTimeout(() => {
+    isInitializing.value = false;
+    isUpdatingFromFilter.value = false;
+  }, 100);
+};
+
+// Handle date change dari DateRangeComponent
+const handleDateChange = (newValue) => {
+  // Skip jika sedang initialization atau update dari filter
+  if (isInitializing.value || isUpdatingFromFilter.value) {
+    return;
+  }
+
+  // Validasi date range
+  if (!newValue?.start || !newValue?.end) {
+    console.warn('Invalid date range received:', newValue);
+    return;
+  }
+
+  if (!isValidDateRange(newValue.start, newValue.end)) {
+    console.warn('Invalid date range: start date must be before or equal to end date');
+    return;
+  }
+
+  // Update local state
+  datePickerValue.value = newValue;
+
+  // Update filters
+  try {
+    const startDateStr = parseDateToPhpFormat(newValue.start);
+    const endDateStr = parseDateToPhpFormat(newValue.end);
+
+    if (startDateStr && endDateStr) {
+      updateFilters({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      });
+      updatePagination({currentPage: 1})
+    }
+  } catch (error) {
+    console.error('Error updating filters:', error);
   }
 };
 
-updateDates();
+// Watch filters untuk sync dengan external changes (misal: reset filter)
+watch(
+  () => [filters.value.startDate, filters.value.endDate],
+  ([newStart, newEnd], [oldStart, oldEnd]) => {
+    // Skip jika sedang initialization atau tidak ada perubahan
+    if (isInitializing.value || isUpdatingFromFilter.value) {
+      return;
+    }
 
-watch(datePickerValue, updateDates, { deep: true });
+    if (newStart === oldStart && newEnd === oldEnd) {
+      return;
+    }
 
-// User API Params
-const currentPage = ref(1);
-const limit = ref(10);
-const sort = ref("desc");
-const { data: users, isLoading } = useAllUsers(
+    // Update date picker jika filters berubah dari luar
+    if (newStart && newEnd) {
+      isUpdatingFromFilter.value = true;
+      
+      const startParsed = convertFromPhpDate(newStart);
+      const endParsed = convertFromPhpDate(newEnd);
+
+      if (startParsed && endParsed && isValidDateRange(startParsed, endParsed)) {
+        datePickerValue.value = {
+          start: startParsed,
+          end: endParsed,
+        };
+      }
+
+      setTimeout(() => {
+        isUpdatingFromFilter.value = false;
+      }, 50);
+    }
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  initializeDatePicker();
+});
+
+const { data: result, isLoading } = useAllUsers(
   computed(() => ({
-    page: currentPage.value,
-    limit: limit.value,
-    sort: sort.value,
-    start: startDate.value,
-    end: endDate.value
+    page: pagination.value.currentPage,
+    limit: pagination.value.limit,
+    sort: pagination.value.sortOrder,
+    start: filters.value.startDate,
+    end: filters.value.endDate,
   })),
   {
     staleTime: 5 * 60 * 1000,
@@ -82,9 +184,9 @@ const { data: users, isLoading } = useAllUsers(
 const columnHelper = createColumnHelper();
 
 const columns = [
-  createSortableColumn(columnHelper, "nama_user", "Username"),
-  // createSortableColumn(columnHelper, "nama_pegawai", "Nama Lengkap"),
-  createSortableColumn(columnHelper, "login_terakhir", "Last Login"),
+  createSortableColumn(columnHelper, "username", "Username"),
+  createSortableColumn(columnHelper, "nama_pegawai", "Nama Lengkap"),
+  createDateColumn(columnHelper, "login_terakhir", "Last Login"),
   createActionsColumn(columnHelper, (row) => {
     return [h(UserTableAction, { userId: String(row.original.id) })];
   }),
@@ -95,25 +197,8 @@ const handleRowClick = (row) => {
   console.log("Row clicked:", row);
 };
 
-const handleSelectionChange = (selection) => {
-  console.log("Selection changed:", selection);
-};
-
 const handlePageChange = (page) => {
-  // Call your API with the new page number
-  // Example:
-  currentPage.value = page;
-};
-
-// Cell color based on column
-const getCellColor = (columnId, row) => {
-  if (columnId === "nama_menu" && !row.id_parent) {
-    return "font-bold text-gray-900"; // Parent menu bold
-  }
-  if (columnId === "path") {
-    return "text-blue-600 font-mono text-sm";
-  }
-  return "";
+  updatePagination({ currentPage: page });
 };
 
 const handleRefreshPage = () => {
@@ -122,9 +207,9 @@ const handleRefreshPage = () => {
 
 const { exportAllUsers, isExporting } = useExportUsers(
   computed(() => ({
-    start: startDate.value,
-    end: endDate.value
-  }))
+    start: filters.value.startDate,
+    end: filters.value.endDate,
+  })),
 );
 
 const exportAllData = async () => {
@@ -133,20 +218,19 @@ const exportAllData = async () => {
 
     if (allUsers?.data?.users?.length > 0) {
       const exportData = {
-        mode: 'user_report',
-        titel: 'All User',
+        mode: "user_report",
+        titel: "All User",
         data: {
-          users: allUsers.data.users
-        }
+          users: allUsers.data.users,
+        },
       };
 
       await ExcelExportService.downloadExcel(exportData);
-      alert(`✅ Berhasil export ${allUsers.data.length} data users`);
     } else {
-      alert('❌ Tidak ada data yang bisa diexport');
+      console.error("❌ Tidak ada data yang bisa diexport");
     }
   } catch (error) {
-    alert('❌ Gagal export data', error);
+    console.error("❌ Gagal export data", error);
   }
 };
 </script>
@@ -157,21 +241,9 @@ const exportAllData = async () => {
       <PageTitle title="Konfigurasi User" />
       <DataTableFilter>
         <DateRangeComponent
-          v-model="datePickerValue"
-          :start-date-display="startDate"
-          :end-date-display="endDate"
+          :model-value="datePickerValue"
+          @update:model-value="handleDateChange"
         />
-
-        <div class="flex gap-2">
-          <Button
-            @click="exportAllData"
-            variant="outline"
-            class="flex items-center gap-2"
-          >
-            <span v-if="isExporting" class="animate-spin">⏳</span>
-            <span>{{ isExporting ? "Exporting..." : "Export All Users" }}</span>
-          </Button>
-        </div>
       </DataTableFilter>
       <CardLayout>
         <div v-if="isLoading" class="grid gap-4">
@@ -180,19 +252,18 @@ const exportAllData = async () => {
         </div>
         <div v-else>
           <DataTable
-            v-if="users"
-            :data="users.data || []"
+            v-if="result"
+            :data="result.data.users || []"
             :columns="columns"
+            :tableStateName="tableStateName"
             :filter-column="['username', 'nama_pegawai']"
             filter-placeholder="Search name"
             :show-column-visibility="true"
             :show-pagination="true"
             :enable-selection="true"
-            :page-size="limit"
-            :cell-class-name="getCellColor"
-            :pagination="users.pagination"
+            :page-size="Number(pagination.limit)"
+            :pagination="result.data.pagination"
             @row-click="handleRowClick"
-            @selection-change="handleSelectionChange"
             @page-change="handlePageChange"
           >
             <template #empty>
@@ -203,6 +274,19 @@ const exportAllData = async () => {
 
             <template #actions>
               <AddMenuModal />
+            </template>
+
+            <template #tools>
+              <div class="flex gap-2">
+                <Button
+                  @click="exportAllData"
+                  class="flex items-center gap-2 cursor-pointer"
+                >
+                  <span v-if="isExporting" class="animate-spin">⏳</span>
+                  <span v-else><IconFileTypeXls /></span>
+                  <span>{{ isExporting ? "Exporting..." : "Export" }}</span>
+                </Button>
+              </div>
             </template>
           </DataTable>
           <EmptyResult v-else @refresh-btn-click="handleRefreshPage" />

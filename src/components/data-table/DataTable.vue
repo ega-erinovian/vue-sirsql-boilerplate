@@ -73,6 +73,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  tableStateName: {
+    type: String,
+    required: true
+  }
 });
 
 const emit = defineEmits(["rowClick", "selectionChange", "pageChange"]);
@@ -191,6 +195,10 @@ const handlePageChange = (page) => {
       <template #actions>
         <slot name="actions" />
       </template>
+
+      <template #tools>
+        <slot name="tools" />
+      </template>
     </DataTableToolbar>
 
     <DataTableContent
@@ -206,6 +214,7 @@ const handlePageChange = (page) => {
     <DataTablePagination
       v-if="showPagination"
       :table="table"
+      :tableStateName="tableStateName"
       :enable-selection="enableSelection"
       :pagination="pagination"
       @page-change="handlePageChange"

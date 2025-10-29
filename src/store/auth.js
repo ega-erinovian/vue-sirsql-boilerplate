@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { authService } from "@/services/auth/auth";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
