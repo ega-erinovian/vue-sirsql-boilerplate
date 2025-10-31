@@ -24,7 +24,7 @@ const routes = [
   ...pelayananRoutes,
   ...administratorRoutes,
   ...asuransiRoutes,
-  { path: '/:pathMatch(.*)*', component: PageNotFound },
+  { path: "/:pathMatch(.*)*", component: PageNotFound },
   {
     path: "/pdf-export-demo",
     name: "PDF Export",
@@ -43,6 +43,9 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const hasToken = !!Cookies.get("accessToken");
+  const routeRecord = to.matched.find(record => 
+    record.meta.allowedRoles && Array.isArray(record.meta.allowedRoles)
+  );
 
   // Route requires authentication
   if (requiresAuth) {
@@ -86,6 +89,20 @@ router.beforeEach(async (to, from, next) => {
       !allowedRoutes.includes(to.path)
     ) {
       if (!authStore.allowedPath.includes(to.path)) {
+        authStore.setAccessDenied();
+        return next({ name: "Beranda" });
+      }
+    }
+
+    if (routeRecord) {
+      const allowedRoles = routeRecord.meta.allowedRoles;
+      const userRoles = authStore.user?.roles || [];
+      
+      const hasRequiredRole = allowedRoles.some(role => 
+        userRoles.includes(role)
+      );
+      
+      if (!hasRequiredRole) {
         authStore.setAccessDenied();
         return next({ name: "Beranda" });
       }

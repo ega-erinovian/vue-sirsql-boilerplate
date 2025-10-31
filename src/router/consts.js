@@ -5,3 +5,7 @@ export const allowedRoutes = [
   "/administrator/menu",
   "/administrator/role",
 ];
+
+export const PERMISSIONS = {
+  
+}

@@ -33,8 +33,6 @@ onBeforeMount(() => {
     sidebarStore.setMenus(props.menus);
   }
 
-  console.log(props.menus);
-
   // Set allowed path for user - auth guard
   if (props.menus.data) {
     props.menus.data.forEach((item) => {

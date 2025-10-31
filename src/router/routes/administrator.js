@@ -1,8 +1,8 @@
-import MenusView from "@/views/konfigurasi-sistem/menu/MenusView.vue";
-import RolesView from "@/views/konfigurasi-sistem/role/RolesView.vue";
-import ChangePasswordView from "@/views/konfigurasi-sistem/user/ChangePasswordView.vue";
-import EditUserView from "@/views/konfigurasi-sistem/user/EditUserView.vue";
-import UsersView from "@/views/konfigurasi-sistem/user/UsersView.vue";
+import MenusView from "@/views/administrator/menu/MenusView.vue";
+import RolesView from "@/views/administrator/role/RolesView.vue";
+import ChangePasswordView from "@/views/administrator/user/ChangePasswordView.vue";
+import EditUserView from "@/views/administrator/user/EditUserView.vue";
+import UsersView from "@/views/administrator/user/UsersView.vue";
 
 const administratorRoutes = [
   // user
@@ -10,13 +10,13 @@ const administratorRoutes = [
     path: "/administrator/user",
     name: "Tabel User",
     component: UsersView,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, allowedRoles: ['SUPERUSER'] },
   },
   {
     path: "/change-password",
     name: "Change Password",
     component: ChangePasswordView,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, allowedRoles: ['KLAIM'] },
   },
   {
     path: "/administrator/user/edit",
