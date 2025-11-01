@@ -49,6 +49,10 @@
 
   --color-brand-primary: var(--brand-primary);
   --color-brand-accent: var(--brand-accent);
+  --color-brand-light: var(--brand-light);
+  --color-brand-neutral: var(--brand-neutral);
+  --color-brand-secondary: var(--brand-secondary);
+
   /* New bootstrap color variables */
   --color-bs-primary: var(--bs-primary);
   --color-bs-secondary: var(--bs-secondary);
@@ -103,6 +107,9 @@
 
   --brand-primary: #003f51;
   --brand-accent: #003342;
+  --brand-light: #008080;
+  --brand-neutral: #EAEAEA;
+  --brand-secondary: #FF9400;
 
   /* bootstrap color class */
   --bs-primary: #0d6efd; /* Primary color */

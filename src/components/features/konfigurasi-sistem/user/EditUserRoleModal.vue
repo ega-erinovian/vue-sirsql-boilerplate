@@ -73,11 +73,6 @@ const filteredRole = computed(() => {
     <DialogContent class="sm:max-w-xl" aria-describedby="undefined">
       <DialogHeader>
         <DialogTitle>Assign Role</DialogTitle>
-        <!-- <AlertComponent
-          v-if="isError"
-          :description="error.response?.data?.error"
-          variant="danger"
-        /> -->
       </DialogHeader>
       <form @submit="onSubmit" class="grid gap-2">
         <Combobox
@@ -107,7 +102,7 @@ const filteredRole = computed(() => {
               </ComboboxInput>
             </TagsInput>
 
-            <ComboboxList>
+            <ComboboxList class="w-[524px]">
               <ComboboxEmpty />
               <ComboboxGroup>
                 <ComboboxItem
@@ -133,7 +128,7 @@ const filteredRole = computed(() => {
             </ComboboxList>
           </ComboboxAnchor>
         </Combobox>
-        <!-- <Button
+        <Button
           type="submit"
           class="w-full cursor-pointer"
           :class="[isPending ? 'cursor-progress' : '']"
@@ -141,7 +136,7 @@ const filteredRole = computed(() => {
         >
           <Spinner v-if="isPending" />
           {{ isPending ? "Submitting..." : "Submit" }}
-        </Button> -->
+        </Button>
       </form>
     </DialogContent>
   </Dialog>

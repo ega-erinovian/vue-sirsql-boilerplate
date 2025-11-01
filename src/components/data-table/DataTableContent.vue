@@ -113,11 +113,11 @@ const getHeaderClass = (header) => {
               cn(
                 {
                   'sticky bg-background/95': header.column.getIsPinned(),
-                  'rounded-tl-md': index === 0,
-                  'rounded-tr-md': index === headerGroup.headers.length - 1,
+                  'rounded-tl-sm': index === 0,
+                  'rounded-tr-sm': index === headerGroup.headers.length - 1,
                 },
                 header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                'bg-brand-primary text-white',
+                'bg-[#008080] text-white',
                 getHeaderClass(header),
               )
             "

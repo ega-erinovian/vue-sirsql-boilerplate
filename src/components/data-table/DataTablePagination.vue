@@ -163,18 +163,20 @@ const goToNextPage = () => {
   }
 };
 
+// FIXED: Corrected canPreviousPage logic
 const canPreviousPage = computed(() => {
   if (isApiPagination.value) {
-    return props.pagination.has_prev;
+    return props.pagination.has_prev || currentPage.value > 1;
   }
-  return props.table.getCanPreviousPage();
+  return currentPage.value > 1;
 });
 
+// FIXED: Corrected canNextPage logic
 const canNextPage = computed(() => {
   if (isApiPagination.value) {
-    return props.pagination.has_next;
+    return props.pagination.has_next || currentPage.value < totalPages.value;
   }
-  return props.table.getCanNextPage();
+  return currentPage.value < totalPages.value;
 });
 
 // Check if pagination should be shown (more than 1 page)
@@ -200,7 +202,7 @@ const showPaginationControls = computed(() => {
             <SelectItem value="50"> 50 </SelectItem>
           </SelectGroup>
         </SelectContent>
-      </Select> per Page of {{ pagination?.total_records || totalItems }} Data
+      </Select> entries of {{ pagination?.total_records || totalItems }} data
     </div>
     <!-- Show pagination only if there's more than 1 page -->
     <Pagination
@@ -212,8 +214,13 @@ const showPaginationControls = computed(() => {
       :page="currentPage"
     >
       <PaginationList class="flex justify-end items-center gap-1">
-        <PaginationFirst @click="goToFirstPage" :disabled="!canPreviousPage" />
+        <PaginationFirst
+          class="cursor-pointer"  
+          @click="goToFirstPage" 
+          :disabled="!canPreviousPage || currentPage === 1" 
+        />
         <PaginationPrevious
+          class="cursor-pointer"  
           @click="goToPreviousPage"
           :disabled="!canPreviousPage"
         />
@@ -226,7 +233,8 @@ const showPaginationControls = computed(() => {
           >
             <Button
               class="w-10 h-10 p-0"
-              :variant="item === currentPage ? 'default' : 'outline'"
+              :class="[item === currentPage ? 'cursor-auto border' : 'cursor-pointer']"
+              :variant="item === currentPage ? 'secondary' : 'outline'"
               @click="goToPage(item)"
             >
               {{ item }}
@@ -239,8 +247,16 @@ const showPaginationControls = computed(() => {
           />
         </template>
 
-        <PaginationNext @click="goToNextPage" :disabled="!canNextPage" />
-        <PaginationLast @click="goToLastPage" :disabled="!canNextPage" />
+        <PaginationNext 
+          class="cursor-pointer"
+          @click="goToNextPage" 
+          :disabled="!canNextPage" 
+        />
+        <PaginationLast 
+          class="cursor-pointer"
+          @click="goToLastPage" 
+          :disabled="!canNextPage || currentPage === totalPages" 
+        />
       </PaginationList>
     </Pagination>
   </div>

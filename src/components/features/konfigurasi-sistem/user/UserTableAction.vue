@@ -20,13 +20,13 @@ defineProps({
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="secondary" class="cursor-pointer w-6 h-6"> <Ellipsis /> </Button>
+      <Button variant="secondary" class="cursor-pointer w-6 h-6 rounded-full"> <Ellipsis /> </Button>
     </DropdownMenuTrigger>
-    <DropdownMenuContent class="w-56" align="end">
-      <DropdownMenuLabel class="font-bold">User Settings</DropdownMenuLabel>
-      <DropdownMenuSeparator />
+    <DropdownMenuContent class="w-40 p-0 rounded-tr-none" align="end">
+      <DropdownMenuLabel class="bg-brand-neutral p-2">User Settings</DropdownMenuLabel>
+      <DropdownMenuSeparator class="m-0" />
       <DropdownMenuGroup>
-        <DropdownMenuItem :onSelect="(e) => e.preventDefault()" class="p-0">
+        <DropdownMenuItem :onSelect="(e) => e.preventDefault()" class="p-0 m-1">
           <EditUserRoleModal />
         </DropdownMenuItem>
       </DropdownMenuGroup>

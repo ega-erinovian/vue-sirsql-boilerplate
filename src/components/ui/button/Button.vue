@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
 import { Primitive } from "reka-ui";
 import { cn } from "@/lib/utils";

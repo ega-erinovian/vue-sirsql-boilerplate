@@ -268,8 +268,8 @@ onMounted(async () => {
                     <PopoverContent
                       side="right"
                       align="start"
-                      :side-offset="2"
-                      class="max-w-36 p-1 shadow-xl ml-1"
+                      :side-offset="5"
+                      class="max-w-36 shadow-xl p-0"
                       @mouseenter="handleNestedMouseEnter(item.id, subItem.id)"
                       @mouseleave="handleNestedMouseLeave(item.id, subItem.id)"
                     >
@@ -277,7 +277,7 @@ onMounted(async () => {
                         v-for="nestedItem in subItem.children"
                         :key="nestedItem.id"
                         :to="nestedItem.path"
-                        class="flex items-center gap-1 px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 rounded"
+                        class="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 rounded m-1"
                         :class="nestedItem.path === currentPath ? SUB_ITEM_ACTIVE_CLASS : ''"
                       >
                         {{ nestedItem.nama_menu }}

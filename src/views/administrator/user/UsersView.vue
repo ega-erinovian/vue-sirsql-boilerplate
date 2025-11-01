@@ -7,6 +7,7 @@ import DataTable from "@/components/data-table/DataTable.vue";
 import ExportButton from "@/components/data-table/ExportButton.vue";
 import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
 import UserTableAction from "@/components/features/konfigurasi-sistem/user/UserTableAction.vue";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDateRangeFilter } from "@/composables/helper/data-filters/useDateRangeFilter";
 import { useTableState } from "@/composables/helper/data-table/useTableState";
@@ -19,6 +20,7 @@ import {
   createDateColumn,
   createSortableColumn,
 } from "@/lib/tableColumnHelpers";
+import { IconRefresh } from "@tabler/icons-vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import { computed, h, ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -104,6 +106,7 @@ watch(
     <div class="w-full mx-auto grid gap-4">
       <PageTitle title="Konfigurasi User" />
       <DataTableFilter>
+        <Button variant="destructive"><IconRefresh/></Button>
         <DateRangeComponent
           :model-value="datePickerValue"
           @update:model-value="handleDateChange"
