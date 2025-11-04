@@ -29,7 +29,7 @@ const props = defineProps({
 
 const emits = defineEmits(["update:open"]);
 
-const isMobile = useMediaQuery("(max-width: 768px)");
+const isMobile = useMediaQuery("(max-width: 900px)");
 const openMobile = ref(false);
 
 const open = useVModel(props, "open", emits, {

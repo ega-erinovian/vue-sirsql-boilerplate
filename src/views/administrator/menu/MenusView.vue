@@ -1,6 +1,7 @@
 <script setup>
 import EmptyResult from "@/components/common/EmptyResult.vue";
 import PageTitle from "@/components/common/PageTitle.vue";
+import DataLimit from "@/components/data-table/DataLimit.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
 import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,8 +18,9 @@ import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const tableStateName = "administrator_menus";
 
-const { pagination, updatePagination } = useTableState("administrator_menus");
+const { pagination, updatePagination } = useTableState(tableStateName);
 
 const limit = ref(computed(() => pagination.value?.limit));
 const forceRefetchDummy = ref(0);
@@ -101,7 +103,7 @@ const handleRefreshPage = () => {
           <DataTable
             v-if="menus"
             :data="menus.data"
-            tableStateName="administrator_menus"
+            :tableStateName="tableStateName"
             :columns="columns"
             :filter-column="['nama_menu', 'icon']"
             filter-placeholder="Search name"
@@ -120,6 +122,10 @@ const handleRefreshPage = () => {
             </template>
 
             <template #actions>
+              <DataLimit :tableStateName="tableStateName" />
+            </template>
+
+            <template #tools>
               <AddMenuModal />
             </template>
           </DataTable>

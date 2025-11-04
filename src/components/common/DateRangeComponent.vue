@@ -41,11 +41,11 @@ onMounted(() => {
   <Popover>
     <PopoverTrigger>
       <div class="grid w-fit max-w-sm text-sm gap-2 cursor-pointer">
-        <ButtonGroup class="!gap-0">
-          <ButtonGroupText class="px-3 bg-neutral-300 border-0">
+        <ButtonGroup class="!gap-0 shadow-sm rounded-lg">
+          <ButtonGroupText class="px-3 bg-brand-primary text-white border-0">
             <Calendar />
           </ButtonGroupText>
-          <InputGroup class="w-fit p-4 bg-neutral-100 border-0">
+          <InputGroup class="w-fit p-4 bg-white border-0">
             <input 
               :value="startDateDisplay" 
               class="w-20 text-center" 
@@ -53,10 +53,10 @@ onMounted(() => {
               placeholder="Start date"
             />
           </InputGroup>
-          <ButtonGroupText class="px-0 bg-neutral-100 border-0">
+          <ButtonGroupText class="px-0 bg-white border-0">
             s.d.
           </ButtonGroupText>
-          <InputGroup class="w-fit p-4 bg-neutral-100 border-0">
+          <InputGroup class="w-fit p-4 bg-white border-0">
             <input 
               :value="endDateDisplay" 
               class="w-20 text-center" 

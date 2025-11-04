@@ -98,7 +98,7 @@ const getHeaderClass = (header) => {
 </script>
 
 <template>
-  <div class="rounded-md border">
+  <div class="rounded-md shadow-sm w-full">
     <Table>
       <TableHeader>
         <TableRow
@@ -117,7 +117,7 @@ const getHeaderClass = (header) => {
                   'rounded-tr-sm': index === headerGroup.headers.length - 1,
                 },
                 header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                'bg-[#008080] text-white',
+                'bg-brand-primary text-white',
                 getHeaderClass(header),
               )
             "

@@ -2,9 +2,8 @@
 
 <script setup>
 import { Button } from "@/components/ui/button";
-import { useTableState } from "@/composables/helper/data-table/useTableState";
 import { PaginationList, PaginationListItem } from "reka-ui";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import {
   Pagination,
   PaginationEllipsis,
@@ -13,14 +12,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "../ui/select";
 
 const props = defineProps({
   table: {
@@ -42,17 +33,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["pageChange"]);
-
-const { pagination: paginationStore, updatePagination } = useTableState(props.tableStateName);
-
-const limit = ref(paginationStore.value?.limit || "10");
-
-watch(limit, (newLimit) => {
-  if (newLimit) {
-    updatePagination({ limit: newLimit });
-    goToFirstPage();
-  }
-});
 
 const isApiPagination = computed(() => props.pagination !== null);
 
@@ -186,23 +166,9 @@ const showPaginationControls = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between pt-4">
-    <div class="flex gap-2 items-center w-full">
-      Showing
-      <Select v-model="limit">
-        <SelectTrigger>
-          <SelectValue :aria-label="limit">
-            {{ limit }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="10"> 10 </SelectItem>
-            <SelectItem value="30"> 30 </SelectItem>
-            <SelectItem value="50"> 50 </SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select> entries of {{ pagination?.total_records || totalItems }} data
+  <div class="flex flex-col items-center justify-center pt-4 gap-4 md:flex-row md:justify-between">
+    <div class="flex gap-2 items-center justify-center md:justify-start w-full">
+      {{ pagination?.total_records || totalItems }} Data Found
     </div>
     <!-- Show pagination only if there's more than 1 page -->
     <Pagination
@@ -213,14 +179,14 @@ const showPaginationControls = computed(() => {
       :default-page="currentPage"
       :page="currentPage"
     >
-      <PaginationList class="flex justify-end items-center gap-1">
+      <PaginationList class="flex justify-center md:justify-end items-center gap-1">
         <PaginationFirst
-          class="cursor-pointer"  
+          class="cursor-pointer w-8 h-8"  
           @click="goToFirstPage" 
           :disabled="!canPreviousPage || currentPage === 1" 
         />
         <PaginationPrevious
-          class="cursor-pointer"  
+          class="cursor-pointer w-8 h-8"  
           @click="goToPreviousPage"
           :disabled="!canPreviousPage"
         />
@@ -232,7 +198,7 @@ const showPaginationControls = computed(() => {
             as-child
           >
             <Button
-              class="w-10 h-10 p-0"
+              class="w-8 h-8 p-0"
               :class="[item === currentPage ? 'cursor-auto border' : 'cursor-pointer']"
               :variant="item === currentPage ? 'secondary' : 'outline'"
               @click="goToPage(item)"
@@ -248,12 +214,12 @@ const showPaginationControls = computed(() => {
         </template>
 
         <PaginationNext 
-          class="cursor-pointer"
+          class="cursor-pointer w-8 h-8"
           @click="goToNextPage" 
           :disabled="!canNextPage" 
         />
         <PaginationLast 
-          class="cursor-pointer"
+          class="cursor-pointer w-8 h-8"
           @click="goToLastPage" 
           :disabled="!canNextPage || currentPage === totalPages" 
         />

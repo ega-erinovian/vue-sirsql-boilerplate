@@ -77,6 +77,6 @@ const handleExport = async () => {
   >
     <span v-if="isExporting" class="animate-spin">⏳</span>
     <IconFileTypeXls v-else />
-    <span>{{ isExporting ? "Exporting..." : "Export" }}</span>
+    <span class="hidden lg:block">{{ isExporting ? "Exporting..." : "Export" }}</span>
   </Button>
 </template>

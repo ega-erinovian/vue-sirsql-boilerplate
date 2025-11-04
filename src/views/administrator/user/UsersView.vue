@@ -3,6 +3,7 @@ import DateRangeComponent from "@/components/common/DateRangeComponent.vue";
 import EmptyResult from "@/components/common/EmptyResult.vue";
 import PageTitle from "@/components/common/PageTitle.vue";
 import SearchDatatable from "@/components/data-filter/SearchDatatable.vue";
+import DataLimit from "@/components/data-table/DataLimit.vue";
 import DataTable from "@/components/data-table/DataTable.vue";
 import ExportButton from "@/components/data-table/ExportButton.vue";
 import AddMenuModal from "@/components/features/konfigurasi-sistem/menu/AddMenuModal.vue";
@@ -106,7 +107,7 @@ watch(
     <div class="w-full mx-auto grid gap-4">
       <PageTitle title="Konfigurasi User" />
       <DataTableFilter>
-        <Button variant="destructive"><IconRefresh/></Button>
+        <Button variant="warning"><IconRefresh/> Refresh</Button>
         <DateRangeComponent
           :model-value="datePickerValue"
           @update:model-value="handleDateChange"
@@ -140,7 +141,7 @@ watch(
             </template>
 
             <template #actions>
-              <AddMenuModal />
+              <DataLimit :tableStateName="tableStateName" />
             </template>
 
             <template #tools>
@@ -149,6 +150,7 @@ watch(
                   :table-state="tableState"
                   placeholder="Search users..."
                 />
+                <AddMenuModal />
                 <ExportButton
                   :fetch-data="exportAllUsers"
                   mode="user_report"

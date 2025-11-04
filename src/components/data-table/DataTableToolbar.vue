@@ -31,7 +31,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex gap-2 items-center justify-between pb-4">
+  <div class="flex flex-col md:flex-row gap-2 items-center justify-between pb-4">
     <div class="flex gap-2">
       <slot name="actions" />
     </div>
@@ -40,8 +40,7 @@ defineProps({
       <slot name="tools" />
       <DropdownMenu v-if="showColumnVisibility">
         <DropdownMenuTrigger as-child>
-          <Button variant="outline" class="ml-auto">
-            Columns <ChevronDown class="ml-2 h-4 w-4" />
+          <Button variant="outline" class="ml-auto"><ChevronDown class="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

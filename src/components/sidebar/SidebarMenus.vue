@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ChevronRight, Home } from "lucide-vue-next";
-import { watch } from "vue";
+import { onUnmounted, watch } from "vue";
 import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -31,9 +31,19 @@ const hoverTimeouts = ref({});
 const nestedOpenMenus = ref({});
 const nestedHoverTimeouts = ref({});
 const iconComponents = ref({});
+const isMobile = ref(false);
 
-// Hover handlers for main menu
+// Detect if device is mobile/touch
+const checkIsMobile = () => {
+  isMobile.value = window.matchMedia('(max-width: 900px)').matches || 
+                   ('ontouchstart' in window) || 
+                   (navigator.maxTouchPoints > 0);
+};
+
+// Hover handlers for main menu (Desktop only)
 const handleMouseEnter = (itemId) => {
+  if (isMobile.value) return;
+  
   if (hoverTimeouts.value[itemId]) {
     clearTimeout(hoverTimeouts.value[itemId]);
   }
@@ -41,14 +51,37 @@ const handleMouseEnter = (itemId) => {
 };
 
 const handleMouseLeave = (itemId) => {
+  if (isMobile.value) return;
+  
   hoverTimeouts.value[itemId] = setTimeout(() => {
     openMenus.value[itemId] = false;
     closeNestedMenus(itemId);
   }, HOVER_DELAY);
 };
 
-// Hover handlers for nested submenu
+// Click handler for mobile
+const handleClick = (itemId, event) => {
+  if (!isMobile.value) return;
+  
+  event.preventDefault();
+  event.stopPropagation();
+  
+  // Toggle menu
+  openMenus.value[itemId] = !openMenus.value[itemId];
+  
+  // Close other menus
+  Object.keys(openMenus.value).forEach(key => {
+    if (key !== itemId) {
+      openMenus.value[key] = false;
+      closeNestedMenus(key);
+    }
+  });
+};
+
+// Hover handlers for nested submenu (Desktop only)
 const handleNestedMouseEnter = (parentId, subItemId) => {
+  if (isMobile.value) return;
+  
   const key = `${parentId}-${subItemId}`;
 
   if (nestedHoverTimeouts.value[key]) {
@@ -62,10 +95,32 @@ const handleNestedMouseEnter = (parentId, subItemId) => {
 };
 
 const handleNestedMouseLeave = (parentId, subItemId) => {
+  if (isMobile.value) return;
+  
   const key = `${parentId}-${subItemId}`;
   nestedHoverTimeouts.value[key] = setTimeout(() => {
     nestedOpenMenus.value[key] = false;
   }, HOVER_DELAY);
+};
+
+// Click handler for nested menu (Mobile)
+const handleNestedClick = (parentId, subItemId, event) => {
+  if (!isMobile.value) return;
+  
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const key = `${parentId}-${subItemId}`;
+  
+  // Toggle nested menu
+  nestedOpenMenus.value[key] = !nestedOpenMenus.value[key];
+  
+  // Close other nested menus under the same parent
+  Object.keys(nestedOpenMenus.value).forEach(k => {
+    if (k.startsWith(`${parentId}-`) && k !== key) {
+      nestedOpenMenus.value[k] = false;
+    }
+  });
 };
 
 // Helper functions
@@ -163,6 +218,13 @@ onMounted(async () => {
   if (props.items?.length) {
     iconComponents.value = await loadIcons(props.items);
   }
+  
+  checkIsMobile();
+  window.addEventListener('resize', checkIsMobile);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkIsMobile);
 });
 </script>
 
@@ -210,6 +272,7 @@ onMounted(async () => {
             as-child
             @mouseenter="handleMouseEnter(item.id)"
             @mouseleave="handleMouseLeave(item.id)"
+            @click="handleClick(item.id, $event)"
           >
             <SidebarMenuButton
               class="cursor-pointer text-lg py-6"
@@ -255,6 +318,7 @@ onMounted(async () => {
                       as-child
                       @mouseenter="handleNestedMouseEnter(item.id, subItem.id)"
                       @mouseleave="handleNestedMouseLeave(item.id, subItem.id)"
+                      @click="handleNestedClick(item.id, subItem.id, $event)"
                     >
                       <div
                         class="px-3 py-2 text-sm cursor-pointer hover:bg-stone-200 flex items-center justify-between rounded-md m-1"

@@ -5,5 +5,5 @@ defineProps({
 });
 </script>
 <template>
-    <h1 :class="['text-5xl text-white font-black mb-2', className]">{{ title }}</h1>
+    <h1 :class="['text-3xl font-black', className]">{{ title }}</h1>
 </template>

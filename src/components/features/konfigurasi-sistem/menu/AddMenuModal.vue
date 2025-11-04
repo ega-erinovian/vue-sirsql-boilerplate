@@ -80,7 +80,7 @@ const onSubmit = handleSubmit((values) => {
   <Dialog>
     <DialogTrigger as-child>
       <Button class="bg-bs-success hover:bg-bs-success-dark cursor-pointer"
-        ><Plus />Add</Button
+        ><Plus /><span class="hidden lg:block">Add</span></Button
       >
     </DialogTrigger>
     <DialogContent class="sm:max-w-xl">

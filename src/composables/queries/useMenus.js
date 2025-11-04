@@ -41,7 +41,6 @@ export function useMenusByUserId(options = {}) {
     queryFn: async () => {
       const result = await getMenusByUserId();
 
-      // Return the actual data based on what getMenusByUserId returns
       return result.data || [];
     },
     ...options,

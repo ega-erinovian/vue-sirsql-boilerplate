@@ -25,6 +25,7 @@ const queryEnabled = computed(() => {
 const { data: sidebarMenu, isLoading } = useMenusByUserId({
   enabled: queryEnabled,
   staleTime: 5 * 60 * 1000,
+  queryKey: [userId],
 });
 
 // Setup auto token refresh while browser is open
@@ -60,7 +61,7 @@ const isFirstLogin = !authStore.isFirstLogin;
 
   <SidebarProvider v-else-if="isFirstLogin">
     <SidebarComponent :menus="sidebarMenu || []" />
-    <SidebarInset class="bg-brand-primary">
+    <SidebarInset class="bg-secondary">
       <NavbarComponent :user="user" />
 
       <!-- Loading state for menus -->
